@@ -1,0 +1,2 @@
+# easy-announcements
+Easy Announcements
