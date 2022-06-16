@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Announcements
  * Description: Easily add announcements, banners, and popups to your WordPress site.
- * Version: 0.1
+ * Version: 0.1.1
  * Author: Philly Web Team
  * Author URI: https://www.phillywebteam.com
  * 
