@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 if ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'announcement' ) {
     wp_enqueue_style( 'wp-color-picker' );
-    wp_enqueue_script( 'easy-announcements-admin', plugin_dir_url( __FILE__ ) . 'assets/js/easy-announcements-admin.min.js', array( 'jquery', 'wp-color-picker' ), EA_VERSION );
+    wp_enqueue_script( 'easy-announcements-admin', plugin_dir_url( __FILE__ ) . 'assets/js/easy-announcements-admin.min.js', array( 'jquery', 'wp-color-picker' ), EASY_ANNOUNCEMENTS_VERSION );
     wp_enqueue_style( 'easy-announcements-admin', plugin_dir_url( __FILE__ ) . 'assets/css/easy-announcements-admin.css');
 }
 

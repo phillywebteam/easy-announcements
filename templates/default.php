@@ -26,13 +26,13 @@ if ( !empty( $announcement_url ) ) { $announcement_classes .=' has-url'; }
 $announcement_classes = apply_filters( 'ea_announcement_classes', $announcement_classes, $post );
 ?>
 <div 
-	class="<?php echo $announcement_classes; ?>" 
+	class="<?php echo esc_attr( $announcement_classes ); ?>" 
 	data-announcement-id="<?php the_ID(); ?>" 
-	data-announcement-color="<?php echo $announcement_color; ?>" 
-	data-announcement-size="<?php echo $announcement_size; ?>" 
+	data-announcement-color="<?php echo esc_attr( $announcement_color ); ?>" 
+	data-announcement-size="<?php echo esc_attr( $announcement_size ); ?>" 
 	style="<?php
-	if ( !empty( $announcement_color_background ) ) { echo 'background-color: ' . $announcement_color_background . ' !important; '; }
-	if ( !empty( $announcement_color_content ) ) { echo 'color: ' . $announcement_color_content . ' !important; '; }
+	if ( !empty( $announcement_color_background ) ) { echo 'background-color: ' . esc_attr( $announcement_color_background ) . ' !important; '; }
+	if ( !empty( $announcement_color_content ) ) { echo 'color: ' . esc_attr( $announcement_color_content ) . ' !important; '; }
 	?>"
 	role="alert">
 	<?php if ( $announcement_show_title == true ) { ?>
@@ -53,6 +53,6 @@ $announcement_classes = apply_filters( 'ea_announcement_classes', $announcement_
 	</div>
 
 	<?php if ( !empty( $announcement_url ) ) { ?>
-		<a href="<?php echo $announcement_url; ?>" class="announcement-url"><span class="sr-only"><?php the_title(); ?></span></a>
+		<a href="<?php echo esc_attr( $announcement_url ); ?>" class="announcement-url"><span class="sr-only"><?php the_title(); ?></span></a>
 	<?php } ?>
 </div>

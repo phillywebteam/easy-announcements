@@ -2,11 +2,11 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 function easy_announcements_register_scripts() {
-	wp_register_script( 'easy-announcements-cookie', EA_PLUGIN_DIR . 'assets/js/js.cookie.min.js', array( 'jquery' ), EA_VERSION );
-	wp_register_script( 'easy-announcements-bootstrap', EA_PLUGIN_DIR . 'assets/js/bootstrap/bootstrap.bundle.min.js', array( 'jquery' ), EA_VERSION );
-	wp_register_script( 'easy-announcements-live-select', EA_PLUGIN_DIR . 'assets/js/easy-announcements-live-select.min.js', array( 'jquery' ), EA_VERSION );
-	wp_register_script( 'easy-announcements', EA_PLUGIN_DIR . 'assets/js/easy-announcements.min.js', array( 'jquery' ), EA_VERSION );
-    wp_register_style( 'easy-announcements', EA_PLUGIN_DIR . 'assets/css/easy-announcements.css', false, EA_VERSION, 'all' );
+	wp_register_script( 'easy-announcements-cookie', EASY_ANNOUNCEMENTS_PLUGIN_DIR . 'assets/js/js.cookie.min.js', array( 'jquery' ), EASY_ANNOUNCEMENTS_VERSION );
+	wp_register_script( 'easy-announcements-bootstrap', EASY_ANNOUNCEMENTS_PLUGIN_DIR . 'assets/js/bootstrap/bootstrap.bundle.min.js', array( 'jquery' ), EASY_ANNOUNCEMENTS_VERSION );
+	wp_register_script( 'easy-announcements-live-select', EASY_ANNOUNCEMENTS_PLUGIN_DIR . 'assets/js/easy-announcements-live-select.min.js', array( 'jquery' ), EASY_ANNOUNCEMENTS_VERSION );
+	wp_register_script( 'easy-announcements', EASY_ANNOUNCEMENTS_PLUGIN_DIR . 'assets/js/easy-announcements.min.js', array( 'jquery' ), EASY_ANNOUNCEMENTS_VERSION );
+    wp_register_style( 'easy-announcements', EASY_ANNOUNCEMENTS_PLUGIN_DIR . 'assets/css/easy-announcements.css', false, EASY_ANNOUNCEMENTS_VERSION, 'all' );
 }
 add_action( 'init', 'easy_announcements_register_scripts' );
 
@@ -30,7 +30,7 @@ add_action( 'add_meta_boxes', 'easy_announcements_remove_meta_boxes', 100 );
 function easy_announcements_admin_css() {
     global $post_type;
     if ( $post_type == 'announcement' )
-    echo '<style type="text/css">#post-preview, #view-post-btn, #wp-admin-bar-view{display: none;}#minor-publishing-actions {padding: 0;}</style>';
+    	echo wp_kses_post( '<style type="text/css">#post-preview, #view-post-btn, #wp-admin-bar-view{display: none;}#minor-publishing-actions {padding: 0;}</style>' );
 }
 add_action( 'admin_head-post-new.php', 'easy_announcements_admin_css' );
 add_action( 'admin_head-post.php', 'easy_announcements_admin_css' );
@@ -45,14 +45,15 @@ add_action( 'init', 'set_easy_announcements_cookie' );
 
 function get_easy_announcements_cookie( $key ) {
 	if ( isset( $_COOKIE['easy_announcements'] ) ) {
-		$cookie = json_decode( stripslashes( base64_decode( $_COOKIE['easy_announcements'] ) ), true );
+		$cookie = sanitize_text_field( $_COOKIE['easy_announcements'] );
+		$cookie = json_decode( stripslashes( base64_decode( $cookie ) ), true );
 		return $cookie[$key];
 	}
 }
 
 function check_easy_announcements_cookie( $key ) {
 	if ( isset( $_COOKIE['easy_announcements'] ) ) {
-		$cookie = json_decode( stripslashes( base64_decode( $_COOKIE['easy_announcements'] ) ), true );
+		$cookie = json_decode( stripslashes( base64_decode( $cookie ) ), true );
 		if ( array_key_exists( $key, $cookie ) ) {
 			return ( $cookie[$key] == '' ) ? false : true;
 		} else {
@@ -67,7 +68,8 @@ function update_easy_announcements_cookie( $key, $value ) {
 	if ( !isset( $_COOKIE['easy_announcements'] ) ) {
 		set_easy_announcements_cookie();
 	}
-	$cookie = json_decode( stripslashes( base64_decode( $_COOKIE['easy_announcements'] ) ), true );
+	$cookie = sanitize_text_field( $_COOKIE['easy_announcements'] );
+	$cookie = json_decode( stripslashes( base64_decode( $cookie ) ), true );
 	$cookie[$key] = $value;
 	setcookie( 'easy_announcements', base64_encode( json_encode( $cookie ) ), time() + 3600, '/' );
 }
@@ -223,5 +225,5 @@ function easy_announcements_show( $announcement ) {
 	return $show_announcement;
 }
 
-require( EA_ABSPATH . '/includes/posttype.php' );
-require( EA_ABSPATH . '/includes/templates.php' );
+require( EASY_ANNOUNCEMENTS_ABSPATH . '/includes/posttype.php' );
+require( EASY_ANNOUNCEMENTS_ABSPATH . '/includes/templates.php' );

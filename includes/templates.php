@@ -20,10 +20,10 @@ function easy_announcements_main() {
 				ob_start();
 				switch ( $placement ) {
 					case 'popup':
-						include EA_ABSPATH . '/templates/popup.php';
+						include EASY_ANNOUNCEMENTS_ABSPATH . '/templates/popup.php';
 						break;
 					default:
-						include EA_ABSPATH . '/templates/default.php';
+						include EASY_ANNOUNCEMENTS_ABSPATH . '/templates/default.php';
 						break;
 				}
 				$this_announcement = ob_get_clean();
@@ -45,7 +45,7 @@ function easy_announcements_main() {
 				foreach( $attachments as $attachment => $easy_announcements ) {
 					ob_start();
 					?> 
-		var easy_announcements_<?php echo $placement; ?> = '';<?php
+		var easy_announcements_<?php echo esc_attr( $placement ); ?> = '';<?php
 					$easy_announcements_inject .= ob_get_clean();
 
 					$classes[] = 'site-announcements-' . $attachment;
@@ -53,7 +53,7 @@ function easy_announcements_main() {
 					$classes = apply_filters( 'ea_announcements_classes', implode( ' ', $classes ) );
 					ob_start();
 					?>
-					<section class="site-announcements <?php echo $classes; ?>" role="region" aria-label="<?php _e( 'Site Announcements', 'easy-announcements' ); ?>">
+					<section class="site-announcements <?php echo esc_attr( $classes ); ?>" role="region" aria-label="<?php _e( 'Site Announcements', 'easy-announcements' ); ?>">
 						<?php
 						do_action( 'easy_announcements_' . $placement . '_' . $attachment . '_end' );
 						$easy_announcements_section_start = str_replace( array("\r", "\n", "\t"), '', ob_get_clean() );
@@ -61,7 +61,7 @@ function easy_announcements_main() {
 						foreach( $easy_announcements as $id => $announcement ) {
 							ob_start();
 							?> 
-		if (get_easy_announcements_cookie('dismiss-<?php echo $id; ?>') != 'true') easy_announcements_<?php echo $placement; ?> += '<?php echo str_replace( array("\r", "\n", "\t"), '', $announcement ); ?>';<?php
+		if (get_easy_announcements_cookie('dismiss-<?php echo esc_attr( $id ); ?>') != 'true') easy_announcements_<?php echo esc_attr( $placement ); ?> += '<?php echo str_replace( array("\r", "\n", "\t"), '', wp_kses_post( $announcement ) ); ?>';<?php
 							$easy_announcements_inject .= ob_get_clean();
 						}
 
@@ -79,7 +79,7 @@ function easy_announcements_main() {
 
 					ob_start();
 					?> 
-		$('<?php echo $selector; ?>').<?php echo $attachment; ?>('<?php echo $easy_announcements_section_start; ?>' + easy_announcements_<?php echo $placement; ?> + '<?php echo $easy_announcements_section_end; ?>');<?php
+		$('<?php echo esc_attr( $selector ); ?>').<?php echo esc_attr( $attachment ); ?>('<?php echo wp_kses_post( $easy_announcements_section_start ); ?>' + easy_announcements_<?php echo esc_attr( $placement ); ?> + '<?php echo wp_kses_post( $easy_announcements_section_end ); ?>');<?php
 					$easy_announcements_inject .= ob_get_clean();
 				}
 			}
@@ -88,13 +88,13 @@ function easy_announcements_main() {
 		if ( !empty( $easy_announcements_inject ) ) {
 			ob_start();
 ?><script type="text/javascript" id="easy-announcements-inject">
-	var announcement_ids = [<?php echo implode( ',', $easy_announcements_ids ); ?>];
+	var announcement_ids = [<?php echo wp_kses_post( implode( ',', $easy_announcements_ids ) ); ?>];
 
 	jQuery(function($) {
 		if (typeof Cookies.get('easy_announcements') == 'undefined') {
 			set_easy_announcements_cookie();
 		}
-		<?php echo $easy_announcements_inject; ?>
+		<?php echo wp_kses_post( $easy_announcements_inject ); ?>
 
 		$('.modal').each(function(){
 			var modal_id = $(this).attr('id');

@@ -12,9 +12,9 @@ if ( !empty( $announcement_url ) ) { $announcement_classes .=' has-url'; }
 $announcement_classes = apply_filters( 'ea_announcement_classes', $announcement_classes, $post );
 ?>
 <div 
-	class="<?php echo $announcement_classes; ?>" 
+	class="<?php echo esc_attr( $announcement_classes ); ?>" 
 	data-announcement-id="<?php the_ID(); ?>" 
-	data-announcement-size="<?php echo $announcement_size; ?>" 
+	data-announcement-size="<?php echo esc_attr( $announcement_size ); ?>" 
 	<?php if ( !empty( $announcement_url ) ) { echo ' data-announcement-has-url="true"'; } ?> 
 	id="modal<?php the_ID(); ?>" 
 	tabindex="-1" 

@@ -12,20 +12,20 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'EA_ABSPATH', WP_PLUGIN_DIR . '/easy-announcements' );
-define( 'EA_PLUGIN_DIR', plugins_url( '/', __FILE__ ) );
-define( 'EA_VERSION', '0.1' );
-define( 'EA_ACF_PATH', EA_ABSPATH . '/includes/acf/' );
-define( 'EA_ACF_URL', EA_ABSPATH . '/includes/acf/' );
+define( 'EASY_ANNOUNCEMENTS_ABSPATH', WP_PLUGIN_DIR . '/easy-announcements' );
+define( 'EASY_ANNOUNCEMENTS_PLUGIN_DIR', plugins_url( '/', __FILE__ ) );
+define( 'EASY_ANNOUNCEMENTS_VERSION', '0.1' );
+define( 'EASY_ANNOUNCEMENTS_ACF_PATH', EASY_ANNOUNCEMENTS_ABSPATH . '/includes/acf/' );
+define( 'EASY_ANNOUNCEMENTS_ACF_URL', EASY_ANNOUNCEMENTS_ABSPATH . '/includes/acf/' );
 
-require EA_ABSPATH . '/includes/functions.php';
+require EASY_ANNOUNCEMENTS_ABSPATH . '/includes/functions.php';
 
-include_once( EA_ACF_PATH . 'acf.php' );
+include_once( EASY_ANNOUNCEMENTS_ACF_PATH . 'acf.php' );
 
 add_filter( 'acf/settings/url', 'easy_announcements_acf_settings_url' );
 function easy_announcements_acf_settings_url( $url ) {
-    return EA_PLUGIN_DIR . '/includes/acf/';
+    return EASY_ANNOUNCEMENTS_PLUGIN_DIR . '/includes/acf/';
 }
 add_filter( 'acf/settings/show_admin', '__return_false' );
 
-require EA_ABSPATH . '/admin/admin.php';
+require EASY_ANNOUNCEMENTS_ABSPATH . '/admin/admin.php';

@@ -122,40 +122,40 @@ class easy_announcements_settings {
 			$new_input['footer_selector'] = sanitize_text_field( $input['footer_selector'] );
 
 		if ( isset( $input['background_color_primary'] ) )
-			$new_input['background_color_primary'] = sanitize_text_field( $input['background_color_primary'] );
+			$new_input['background_color_primary'] = sanitize_hex_color( $input['background_color_primary'] );
 
 		if ( isset( $input['background_color_secondary'] ) )
-			$new_input['background_color_secondary'] = sanitize_text_field( $input['background_color_secondary'] );
+			$new_input['background_color_secondary'] = sanitize_hex_color( $input['background_color_secondary'] );
 
 		if ( isset( $input['background_color_success'] ) )
-			$new_input['background_color_success'] = sanitize_text_field( $input['background_color_success'] );
+			$new_input['background_color_success'] = sanitize_hex_color( $input['background_color_success'] );
 
 		if ( isset( $input['background_color_danger'] ) )
-			$new_input['background_color_danger'] = sanitize_text_field( $input['background_color_danger'] );
+			$new_input['background_color_danger'] = sanitize_hex_color( $input['background_color_danger'] );
 
 		if ( isset( $input['background_color_warning'] ) )
-			$new_input['background_color_warning'] = sanitize_text_field( $input['background_color_warning'] );
+			$new_input['background_color_warning'] = sanitize_hex_color( $input['background_color_warning'] );
 
 		if ( isset( $input['background_color_info'] ) )
-			$new_input['background_color_info'] = sanitize_text_field( $input['background_color_info'] );
+			$new_input['background_color_info'] = sanitize_hex_color( $input['background_color_info'] );
 
 		if ( isset( $input['content_color_primary'] ) )
-			$new_input['content_color_primary'] = sanitize_text_field( $input['content_color_primary'] );
+			$new_input['content_color_primary'] = sanitize_hex_color( $input['content_color_primary'] );
 
 		if ( isset( $input['content_color_secondary'] ) )
-			$new_input['content_color_secondary'] = sanitize_text_field( $input['content_color_secondary'] );
+			$new_input['content_color_secondary'] = sanitize_hex_color( $input['content_color_secondary'] );
 
 		if ( isset( $input['content_color_success'] ) )
-			$new_input['content_color_success'] = sanitize_text_field( $input['content_color_success'] );
+			$new_input['content_color_success'] = sanitize_hex_color( $input['content_color_success'] );
 
 		if ( isset( $input['content_color_danger'] ) )
-			$new_input['content_color_danger'] = sanitize_text_field( $input['content_color_danger'] );
+			$new_input['content_color_danger'] = sanitize_hex_color( $input['content_color_danger'] );
 
 		if ( isset( $input['content_color_warning'] ) )
-			$new_input['content_color_warning'] = sanitize_text_field( $input['content_color_warning'] );
+			$new_input['content_color_warning'] = sanitize_hex_color( $input['content_color_warning'] );
 
 		if ( isset( $input['content_color_info'] ) )
-			$new_input['content_color_info'] = sanitize_text_field( $input['content_color_info'] );
+			$new_input['content_color_info'] = sanitize_hex_color( $input['content_color_info'] );
 
 		return $new_input;
 	}
@@ -167,7 +167,7 @@ class easy_announcements_settings {
 	public function header_selector_callback() {
 		printf(
 			'<input type="text" id="header_selector" class="regular-text code" name="easy_announcements[header_selector]" value="%s" required />',
-			isset( $this->options['header_selector'] ) ? esc_attr( $this->options['header_selector']) : ''
+			isset( $this->options['header_selector'] ) ? esc_attr( $this->options['header_selector'] ) : ''
 		);
 		echo '<input type="button" class="button button-secondary live-select-toggle" value="Live Select">';
 	}
@@ -175,7 +175,7 @@ class easy_announcements_settings {
 	public function content_selector_callback() {
 		printf(
 			'<input type="text" id="content_selector" class="regular-text code" name="easy_announcements[content_selector]" value="%s" required />',
-			isset( $this->options['content_selector'] ) ? esc_attr( $this->options['content_selector']) : ''
+			isset( $this->options['content_selector'] ) ? esc_attr( $this->options['content_selector'] ) : ''
 		);
 		echo '<input type="button" class="button button-secondary live-select-toggle" value="Live Select">';
 	}
@@ -183,7 +183,7 @@ class easy_announcements_settings {
 	public function footer_selector_callback() {
 		printf(
 			'<input type="text" id="footer_selector" class="regular-text code" name="easy_announcements[footer_selector]" value="%s" required />',
-			isset( $this->options['footer_selector'] ) ? esc_attr( $this->options['footer_selector']) : ''
+			isset( $this->options['footer_selector'] ) ? esc_attr( $this->options['footer_selector'] ) : ''
 		);
 		echo '<input type="button" class="button button-secondary live-select-toggle" value="Live Select">';
 	}
@@ -200,7 +200,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="background_color_primary" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[background_color_primary]" value="%s" />',
 					easy_announcements_default_color( 'background', 'primary' ),
-					isset( $this->options['background_color_primary'] ) ? esc_attr( $this->options['background_color_primary']) : easy_announcements_default_color( 'background', 'primary' )
+					isset( $this->options['background_color_primary'] ) ? esc_attr( $this->options['background_color_primary'] ) : easy_announcements_default_color( 'background', 'primary' )
 				); ?>
 			</div>
 			<div class="sub-field">
@@ -208,7 +208,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="background_color_secondary" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[background_color_secondary]" value="%s" />',
 					easy_announcements_default_color( 'background', 'secondary' ),
-					isset( $this->options['background_color_secondary'] ) ? esc_attr( $this->options['background_color_secondary']) : easy_announcements_default_color( 'background', 'secondary' )
+					isset( $this->options['background_color_secondary'] ) ? esc_attr( $this->options['background_color_secondary'] ) : easy_announcements_default_color( 'background', 'secondary' )
 				); ?>
 			</div>
 			<div class="sub-field">
@@ -216,7 +216,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="background_color_success" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[background_color_success]" value="%s" />',
 					easy_announcements_default_color( 'background', 'success' ),
-					isset( $this->options['background_color_success'] ) ? esc_attr( $this->options['background_color_success']) : easy_announcements_default_color( 'background', 'success' )
+					isset( $this->options['background_color_success'] ) ? esc_attr( $this->options['background_color_success'] ) : easy_announcements_default_color( 'background', 'success' )
 				); ?>
 			</div>
 			<div class="sub-field">
@@ -224,7 +224,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="background_color_danger" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[background_color_danger]" value="%s" />',
 					easy_announcements_default_color( 'background', 'danger' ),
-					isset( $this->options['background_color_danger'] ) ? esc_attr( $this->options['background_color_danger']) : easy_announcements_default_color( 'background', 'danger' )
+					isset( $this->options['background_color_danger'] ) ? esc_attr( $this->options['background_color_danger'] ) : easy_announcements_default_color( 'background', 'danger' )
 				); ?>
 			</div>
 			<div class="sub-field">
@@ -232,7 +232,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="background_color_warning" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[background_color_warning]" value="%s" />',
 					easy_announcements_default_color( 'background', 'warning' ),
-					isset( $this->options['background_color_warning'] ) ? esc_attr( $this->options['background_color_warning']) : easy_announcements_default_color( 'background', 'warning' )
+					isset( $this->options['background_color_warning'] ) ? esc_attr( $this->options['background_color_warning'] ) : easy_announcements_default_color( 'background', 'warning' )
 				); ?>
 			</div>
 			<div class="sub-field">
@@ -240,7 +240,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="background_color_info" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[background_color_info]" value="%s" />',
 					easy_announcements_default_color( 'background', 'info' ),
-					isset( $this->options['background_color_info'] ) ? esc_attr( $this->options['background_color_info']) : easy_announcements_default_color( 'background', 'info' )
+					isset( $this->options['background_color_info'] ) ? esc_attr( $this->options['background_color_info'] ) : easy_announcements_default_color( 'background', 'info' )
 				); ?>
 			</div>
 		</div>
@@ -255,7 +255,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="content_color_primary" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[content_color_primary]" value="%s" />',
 					easy_announcements_default_color( 'content', 'primary' ),
-					isset( $this->options['content_color_primary'] ) ? esc_attr( $this->options['content_color_primary']) : easy_announcements_default_color( 'content', 'primary' )
+					isset( $this->options['content_color_primary'] ) ? esc_attr( $this->options['content_color_primary'] ) : easy_announcements_default_color( 'content', 'primary' )
 				); ?>
 			</div>
 			<div class="sub-field">
@@ -263,7 +263,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="content_color_secondary" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[content_color_secondary]" value="%s" />',
 					easy_announcements_default_color( 'content', 'secondary' ),
-					isset( $this->options['content_color_secondary'] ) ? esc_attr( $this->options['content_color_secondary']) : easy_announcements_default_color( 'content', 'secondary' )
+					isset( $this->options['content_color_secondary'] ) ? esc_attr( $this->options['content_color_secondary'] ) : easy_announcements_default_color( 'content', 'secondary' )
 				); ?>
 			</div>
 			<div class="sub-field">
@@ -271,7 +271,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="content_color_success" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[content_color_success]" value="%s" />',
 					easy_announcements_default_color( 'content', 'success' ),
-					isset( $this->options['content_color_success'] ) ? esc_attr( $this->options['content_color_success']) : easy_announcements_default_color( 'content', 'success' )
+					isset( $this->options['content_color_success'] ) ? esc_attr( $this->options['content_color_success'] ) : easy_announcements_default_color( 'content', 'success' )
 				); ?>
 			</div>
 			<div class="sub-field">
@@ -279,7 +279,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="content_color_danger" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[content_color_danger]" value="%s" />',
 					easy_announcements_default_color( 'content', 'danger' ),
-					isset( $this->options['content_color_danger'] ) ? esc_attr( $this->options['content_color_danger']) : easy_announcements_default_color( 'content', 'danger' )
+					isset( $this->options['content_color_danger'] ) ? esc_attr( $this->options['content_color_danger'] ) : easy_announcements_default_color( 'content', 'danger' )
 				); ?>
 			</div>
 			<div class="sub-field">
@@ -287,7 +287,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="content_color_warning" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[content_color_warning]" value="%s" />',
 					easy_announcements_default_color( 'content', 'warning' ),
-					isset( $this->options['content_color_warning'] ) ? esc_attr( $this->options['content_color_warning']) : easy_announcements_default_color( 'content', 'warning' )
+					isset( $this->options['content_color_warning'] ) ? esc_attr( $this->options['content_color_warning'] ) : easy_announcements_default_color( 'content', 'warning' )
 				); ?>
 			</div>
 			<div class="sub-field">
@@ -295,7 +295,7 @@ class easy_announcements_settings {
 				<?php printf(
 					'<input type="text" id="content_color_info" class="easy-announcements-color-picker" data-default-color="%s" name="easy_announcements[content_color_info]" value="%s" />',
 					easy_announcements_default_color( 'content', 'info' ),
-					isset( $this->options['content_color_info'] ) ? esc_attr( $this->options['content_color_info']) : easy_announcements_default_color( 'content', 'info' )
+					isset( $this->options['content_color_info'] ) ? esc_attr( $this->options['content_color_info'] ) : easy_announcements_default_color( 'content', 'info' )
 				); ?>
 			</div>
 		</div>
