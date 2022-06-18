@@ -36,6 +36,7 @@ Once you install and active please be sure to visit the settings page to configu
 = 0.1.2 =
 * Limiting content types that can be added to announcement if using block editor
 * Added navigation bar to live select tool
+* Live select tool will now detect if a known theme is used and automatically suggest the correct selectors
 
 = 0.1.1 =
 * Initial submission of plugin
