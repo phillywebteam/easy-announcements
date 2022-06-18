@@ -3,11 +3,12 @@ jQuery(function ($) {
 
 	var getUrl = window.location,
 		baseUrl = getUrl.protocol + "//" + getUrl.host + "/",
-		easy_announcements_navigate = '<div class="live-select-toolbar"><button type="button" class="button button-secondary" disabled><span class="dashicons dashicons-admin-site"></span></button><input type="url" class="regular-text" value="' + baseUrl + '"><button type="button" class="button button-secondary live-select-go"><span class="dashicons dashicons-arrow-right-alt"></span></button></div>',
-		easy_announcements_iframe = '<iframe src="' + baseUrl + '?live-select" class="live-select-frame"></iframe>';
+		easy_announcements_navigate = '<div class="live-select-toolbar"><button type="button" class="button button-secondary" disabled><span class="dashicons dashicons-admin-site"></span></button><input type="url" class="regular-text" value="' + baseUrl + '"><button type="button" class="button button-secondary live-select-go"><span class="dashicons dashicons-arrow-right-alt"></span></button></div>';
 
 	$('.selectors-input').each(function () {
-		var wrap = $(this);
+		var wrap = $(this),
+			wrap_type = wrap.attr('class').replace('selectors-input easy-announcements-', '').replace('-selector', ''),
+			easy_announcements_iframe = '<iframe src="' + baseUrl + '?live-select=' + wrap_type + '" class="live-select-frame"></iframe>';
 
 		$('.live-select-toggle', wrap).on('click', function () {
 			$('.live-select-frame, .live-select-toolbar').remove();

@@ -3,7 +3,7 @@
  * Plugin Name: Easy Announcements
  * Plugin URI: https://www.phillywebteam.com/project/easy-announcements/
  * Description: Easily add announcements, banners, and popups to your WordPress site.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: Philly Web Team
  * Author URI: https://www.phillywebteam.com
  * Text Domain: easy-announcements
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 define( 'EASY_ANNOUNCEMENTS_ABSPATH', WP_PLUGIN_DIR . '/easy-announcements' );
 define( 'EASY_ANNOUNCEMENTS_PLUGIN_DIR', plugins_url( '/', __FILE__ ) );
-define( 'EASY_ANNOUNCEMENTS_VERSION', '0.1' );
+define( 'EASY_ANNOUNCEMENTS_VERSION', '0.1.2' );
 define( 'EASY_ANNOUNCEMENTS_ACF_PATH', EASY_ANNOUNCEMENTS_ABSPATH . '/includes/acf/' );
 define( 'EASY_ANNOUNCEMENTS_ACF_URL', EASY_ANNOUNCEMENTS_ABSPATH . '/includes/acf/' );
 
