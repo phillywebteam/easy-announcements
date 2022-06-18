@@ -37,6 +37,15 @@ function update_easy_announcements_setting( $setting ) {
 	}
 };
 
-function easy_announcements_hide_attr() {
-	return true;
+function easy_announcements_allowed_block_types( $allowed_block_types, $post ) {
+    if ( $post->post_type == 'announcement' ) {
+        return array(
+            'core/paragraph',
+            'core/heading',
+            'core/list'
+        );
+    } else {
+        return $allowed_block_types;
+    }
 }
+add_filter( 'allowed_block_types', 'easy_announcements_allowed_block_types', 10, 2 );
