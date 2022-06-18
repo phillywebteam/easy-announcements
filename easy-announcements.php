@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Easy Announcements
+ * Plugin URI: https://www.phillywebteam.com/project/easy-announcements/
  * Description: Easily add announcements, banners, and popups to your WordPress site.
  * Version: 0.1.1
  * Author: Philly Web Team
  * Author URI: https://www.phillywebteam.com
- * 
  * Text Domain: easy-announcements
  * Domain Path: /languages
  */
