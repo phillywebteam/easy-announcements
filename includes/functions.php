@@ -4,19 +4,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 function easy_announcements_register_scripts() {
 	wp_register_script( 'easy-announcements-cookie', EASY_ANNOUNCEMENTS_PLUGIN_DIR . 'assets/js/js.cookie.min.js', array( 'jquery' ), EASY_ANNOUNCEMENTS_VERSION );
 	wp_register_script( 'easy-announcements-bootstrap', EASY_ANNOUNCEMENTS_PLUGIN_DIR . 'assets/js/bootstrap/bootstrap.bundle.min.js', array( 'jquery' ), EASY_ANNOUNCEMENTS_VERSION );
-	wp_register_script( 'easy-announcements-live-select', EASY_ANNOUNCEMENTS_PLUGIN_DIR . 'assets/js/easy-announcements-live-select.min.js', array( 'jquery' ), EASY_ANNOUNCEMENTS_VERSION );
 	wp_register_script( 'easy-announcements', EASY_ANNOUNCEMENTS_PLUGIN_DIR . 'assets/js/easy-announcements.min.js', array( 'jquery' ), EASY_ANNOUNCEMENTS_VERSION );
     wp_register_style( 'easy-announcements', EASY_ANNOUNCEMENTS_PLUGIN_DIR . 'assets/css/easy-announcements.css', false, EASY_ANNOUNCEMENTS_VERSION, 'all' );
 }
 add_action( 'init', 'easy_announcements_register_scripts' );
 
-function easy_announcements_enqueue_scripts(){
+function easy_announcements_enqueue_scripts() {
 	wp_enqueue_script( 'easy-announcements-cookie' );
 	wp_enqueue_script( 'easy-announcements-bootstrap' );
 	wp_enqueue_script( 'easy-announcements' );
 	wp_enqueue_style( 'easy-announcements' );
-	
-	if ( isset( $_GET['live-select'] ) ) wp_enqueue_script( 'easy-announcements-live-select' );
 }
 add_action( 'wp_enqueue_scripts', 'easy_announcements_enqueue_scripts' );
 
@@ -192,6 +189,8 @@ function easy_announcements_show( $announcement ) {
 
 	$announcement_pages_include = get_field( 'announcement_pages_include', $announcement_id ) ?? '';
 	$announcement_pages_exclude = get_field( 'announcement_pages_exclude', $announcement_id ) ?? '';
+	$announcement_dismissable = get_field( 'announcement_dismissable', $announcement_id ) ?? false;
+	$announcement_placement = get_field( 'announcement_placement', $announcement_id ) ?? '';
 
 	if ( $announcement_pages_include != '' ) {
 		if ( in_array( $current_page_ID, $announcement_pages_include ) ) {
@@ -209,7 +208,7 @@ function easy_announcements_show( $announcement ) {
 		$show_announcement = true;
 	}
 
-	if ( get_field( 'announcement_dismissable', $announcement_id ) == true ) {
+	if ( $announcement_dismissable == true || $announcement_placement == 'popup' ) {
 		if (
 			check_easy_announcements_cookie( 'dismiss-' . $announcement_id ) &&
 			get_easy_announcements_cookie( 'dismiss-' . $announcement_id ) == 'true'

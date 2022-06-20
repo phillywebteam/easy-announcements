@@ -1,5 +1,5 @@
 === Easy Announcements ===
-Tags: announcements, popups, announce
+Tags: announcements, popups, banner, heading, announce, advertisement, advertise, briefing, broadcast, disclosure, message, news, notice, statement, easy, philly web team
 Requires at least: 4.7
 Tested up to: 6.0
 Requires PHP: 5.6

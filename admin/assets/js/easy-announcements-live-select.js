@@ -17,69 +17,95 @@ jQuery(function ($) {
 		}
 		return vars;
 	}
+
 	var known_themes = {
-			'halena': {
-				'name': 'Halena',
-				'header': '#masthead',
-				'content': '#content',
-				'footer': '.site-footer',
-			},
-			'betheme': {
-				'name': 'BeTheme',
-				'header': '#Header',
-				'content': '#Content',
-				'footer': '#Footer',
-			},
-			'twentytwentytwo': {
-				'name': 'Twenty Twenty-One',
-				'header': '#Header',
-				'content': '#Content',
-				'footer': '#Footer',
-			},
-			'twentytwenty': {
-				'name': 'Twenty Twenty',
-				'header': '#site-header',
-				'content': '#site-content',
-				'footer': '#site-footer',
-			},
+		'halena': {
+			'name': 'Halena',
+			'header': '#masthead',
+			'content': '#content',
+			'footer': '.site-footer',
 		},
+		'betheme': {
+			'name': 'BeTheme',
+			'header': '#Header',
+			'content': '#Content',
+			'footer': '#Footer',
+		},
+		'twentytwentytwo': {
+			'name': 'Twenty Twenty-One',
+			'header': '#Header',
+			'content': '#Content',
+			'footer': '#Footer',
+		},
+		'twentytwenty': {
+			'name': 'Twenty Twenty',
+			'header': '#site-header',
+			'content': '#site-content',
+			'footer': '#site-footer',
+		} },
+		known_selectors = {
+			'header': ['#masthead', '#Header', '#site-header', '#page-header'],
+			'content': ['#content', '#Content', '#site-content', '#page-content'],
+			'footer': ['#Footer', '#site-footer', '.site-footer'],
+		},
+		known_selector = false,
 		known_theme = false,
 		theme_info = {},
+		manual_selector = false,
 		select_type = getUrlVars()['live-select'];
-	$.each(known_themes, function (theme, info) {
-		if ($('body').hasClass('theme-' + theme)) {
-			known_theme = theme;
-			theme_info = info;
-		}
-	});
 	if (
-		known_theme != false &&
-		known_theme != '' &&
 		select_type != undefined
 	) {
-		var el_selector = '';
-		switch (select_type) {
-			case 'header':
-				el_selector = theme_info['header'];
-				break;
-			case 'content':
-				el_selector = theme_info['content'];
-				break;
-			case 'footer':
-				el_selector = theme_info['footer'];
-				break;
-		}
+		select_type = select_type.replace(/[^\w]/g, '');
+		select_type = select_type.trim();
+		$.each(known_themes, function (theme, info) {
+			if ( typeof ea_live_select_theme !== 'undefined' && ea_live_select_theme == theme ) {
+				known_theme = theme;
+				theme_info = info;
+			}
+		});
+		$.each(known_selectors[select_type], function (i, selector) {
+			if ($(selector).length) {
+				known_selector = selector;
+				el_selector = selector;
+			}
+		});
+		if (
+			known_theme != false &&
+			known_theme != ''
+		) {
+			var el_selector = '';
+			switch (select_type) {
+				case 'header':
+					el_selector = theme_info['header'];
+					break;
+				case 'content':
+					el_selector = theme_info['content'];
+					break;
+				case 'footer':
+					el_selector = theme_info['footer'];
+					break;
+			}
 
-		$('.easy-announcements-live-selector').html('<div class="card selector shadow-lg"><div class="card-body"><p class="mb-0">Detected Theme:</p><h6 class="mt-0 mb-2">' + theme_info['name'] + '</h6><p class="mt-0 mb-0 text-capitalize">' + select_type + ' Selector:</p><p class="mb-3"><code class="fs-5">' + el_selector + '</code></p><a href="#" class="btn btn-primary confirm-live-select-found">Use Selector</a><a href="#" class="btn btn-secondary cancel-live-select-found">Try Again</a></div></div>');
-		
+			$('.easy-announcements-live-selector').html('<div class="card selector shadow-lg"><div class="card-body"><p class="mb-0">Detected Theme:</p><h6 class="mt-0 mb-2">' + theme_info['name'] + '</h6><p class="mt-0 mb-0 text-capitalize">' + select_type + ' Selector:</p><p class="mb-3"><code class="fs-5">' + el_selector + '</code></p><a href="#" class="btn btn-primary confirm-live-select-found">Use Selector</a><a href="#" class="btn btn-secondary cancel-live-select-found">Try Again</a></div></div>');
+		} else if (
+			known_selector != false &&
+			known_selector != ''
+		) {
+			$('.easy-announcements-live-selector').html('<div class="card selector shadow-lg"><div class="card-body"><p class="mt-0 mb-0 text-capitalize">Auto Detected Selector:</p><p class="mb-3"><code class="fs-5">' + el_selector + '</code></p><a href="#" class="btn btn-primary confirm-live-select-found">Use Selector</a><a href="#" class="btn btn-secondary cancel-live-select-found">Try Again</a></div></div>');
+		} else {
+			manual_selector = true;
+		}
+	} else {
+		manual_selector = true;
+	}
+	if (manual_selector == false && el_selector != '') {
 		$('body').addClass('live-select-found');
 		
 		$(document).on('click', '.easy-announcements-live-selector .confirm-live-select-found', function (event) {
 			event.preventDefault();
 			window.parent.postMessage({ 'channel': 'live-select', 'selector': el_selector }, '*');
-		});
-
-		$(document).on('click', '.easy-announcements-live-selector .cancel-live-select-found', function (event) {
+		}).on('click', '.easy-announcements-live-selector .cancel-live-select-found', function (event) {
 			event.preventDefault();
 			window.location = '/?live-select';
 		});
@@ -188,10 +214,11 @@ jQuery(function ($) {
 
 					$(document).on('click', '.easy-announcements-live-selector .confirm-live-select-found', function (event) {
 						event.preventDefault();
-						window.parent.postMessage({ 'channel': 'live-select', 'selector': el_selector }, '*');
-					});
-
-					$(document).on('click', '.easy-announcements-live-selector .cancel-live-select-found', function (event) {
+						window.parent.postMessage({
+							'channel': 'live-select',
+							'selector': el_selector
+						}, '*');
+					}).on('click', '.easy-announcements-live-selector .cancel-live-select-found', function (event) {
 						event.preventDefault();
 						$('body').removeClass('live-select-found');
 						$('.easy-announcements-live-selector').html('').css({
