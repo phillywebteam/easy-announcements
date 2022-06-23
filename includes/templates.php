@@ -61,7 +61,7 @@ function easy_announcements_main() {
 						foreach( $easy_announcements as $id => $announcement ) {
 							ob_start();
 							?> 
-		if (get_easy_announcements_cookie('dismiss-<?php echo esc_attr( $id ); ?>') != 'true' && !$('.announcement-<?php echo esc_attr( $id ); ?>').length) easy_announcements_<?php echo esc_attr( $placement ); ?> += '<?php echo str_replace( array("\r", "\n", "\t"), '', wp_kses_post( $announcement ) ); ?>';<?php
+		if (get_easy_announcements_cookie('dismiss-<?php echo esc_attr( $id ); ?>') != 'true' && !$('.announcement-<?php echo esc_attr( $id ); ?>').length) easy_announcements_<?php echo esc_attr( $placement ); ?> += '<?php echo str_replace( array("\r", "\n", "\t"), '', wp_kses_post( addslashes( $announcement ) ) ); ?>';<?php
 							$easy_announcements_inject .= ob_get_clean();
 						}
 
@@ -79,7 +79,7 @@ function easy_announcements_main() {
 
 					ob_start();
 					?> 
-		$('<?php echo esc_attr( $selector ); ?>').<?php echo esc_attr( $attachment ); ?>('<?php echo wp_kses_post( $easy_announcements_section_start ); ?>' + easy_announcements_<?php echo esc_attr( $placement ); ?> + '<?php echo wp_kses_post( $easy_announcements_section_end ); ?>');<?php
+		$('<?php echo esc_attr( $selector ); ?>').<?php echo esc_attr( $attachment ); ?>('<?php echo wp_kses_post( addslashes( $easy_announcements_section_start ) ); ?>' + easy_announcements_<?php echo esc_attr( $placement ); ?> + '<?php echo wp_kses_post( addslashes( $easy_announcements_section_end ) ); ?>');<?php
 					$easy_announcements_inject .= ob_get_clean();
 				}
 			}
