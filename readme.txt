@@ -3,7 +3,7 @@ Tags: announcements, popups, banner, heading, announce, advertisement, advertise
 Requires at least: 4.7
 Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,11 @@ Once you install and active please be sure to visit the settings page to configu
 * [Github](https://github.com/phillywebteam/easy-announcements)
 
 == Changelog ==
+
+= 0.1.3 =
+* Fixing JS injection bugs
+* Fixing issue where not all themes report same slug
+* If theme not found try looking for common IDs and classes to try
 
 = 0.1.2 =
 * Limiting content types that can be added to announcement if using block editor
