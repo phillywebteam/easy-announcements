@@ -38,7 +38,7 @@ function set_easy_announcements_cookie() {
 		setcookie( 'easy_announcements', base64_encode( json_encode( $cookie ) ), time() + 3600, '/' );
 	}
 }
-add_action( 'send_headers', 'set_easy_announcements_cookie' );
+//add_action( 'send_headers', 'set_easy_announcements_cookie' );
 
 function get_easy_announcements_cookie( $key ) {
 	if ( isset( $_COOKIE['easy_announcements'] ) ) {

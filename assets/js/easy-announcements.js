@@ -18,9 +18,9 @@ function check_easy_announcements_cookie(cookie) {
 
 function set_easy_announcements_cookie(callback) {
 	var visitor_cookie = {};
-	for (const id of announcement_ids) {
-		visitor_cookie['dismiss-' + id] = 'false';
-	}
+	jQuery.each(announcement_ids, function (index, value) {
+		visitor_cookie['dismiss-' + value] = 'false';
+	});
 	visitor_cookie = JSON.stringify(visitor_cookie); // turn into string
 	visitor_cookie = btoa(visitor_cookie); // encrypt it
 	Cookies.set('easy_announcements', visitor_cookie, { expires: 7 });
