@@ -33,6 +33,10 @@ Once you install and active please be sure to visit the settings page to configu
 
 == Changelog ==
 
+= 0.1.4 =
+* Fixed headers error
+* Beginning development of sticky headers
+
 = 0.1.3 =
 * Fixing JS injection bugs
 * Fixing issue where not all themes report same slug
