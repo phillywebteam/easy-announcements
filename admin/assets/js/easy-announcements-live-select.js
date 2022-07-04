@@ -44,9 +44,9 @@ jQuery(function ($) {
 			'footer': '#site-footer',
 		} },
 		known_selectors = {
-			'header': ['#masthead', '#Header', '#site-header', '#page-header'],
-			'content': ['#content', '#Content', '#site-content', '#page-content'],
-			'footer': ['#Footer', '#site-footer', '.site-footer'],
+			'header': ['#masthead', '#Header', '#site-header', '#page-header', '#main-header'],
+			'content': ['#content', '#Content', '#site-content', '#page-content', '#main-content'],
+			'footer': ['#footer', '#Footer', '#site-footer', '#page-footer', '#main-footer', '.site-footer'],
 		},
 		known_selector = false,
 		known_theme = false,

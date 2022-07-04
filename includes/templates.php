@@ -75,6 +75,14 @@ function easy_announcements_main() {
 					if ( $placement == 'popup' ) {
 						$selector = 'body';
 						$attachment = 'append';
+					} else {
+						if ( $placement == 'header' && $attachment == 'before' ) {
+							$selector = 'body';
+							$attachment = 'prepend';
+						} else if ( $placement == 'footer' && $attachment == 'after' ) {
+							$selector = 'body';
+							$attachment = 'append';
+						}
 					}
 
 					ob_start();

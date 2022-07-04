@@ -20,6 +20,7 @@ if ( $announcement_color == 'custom' && !empty( get_field( 'announcement_custom_
 
 $announcement_classes = 'announcement announcement-' . get_the_ID( $announcement );
 $announcement_classes .= !empty( get_field( 'announcement_text_alignment', $announcement ) ) ? ' text-' . get_field( 'announcement_text_alignment', $announcement ) : '';
+$announcement_classes .= ( !empty( get_field( 'announcement_sticky', $announcement ) ) && get_field( 'announcement_sticky', $announcement ) == true ) ? ' announcement-sticky' : '';
 $announcement_classes .= get_field( 'announcement_size' ) == 'none' ? ' p-0' : ' announcement-' . $announcement_size;
 if ( !empty( $announcement_url ) ) { $announcement_classes .=' has-url'; }
 

@@ -54,8 +54,6 @@ if( function_exists('acf_add_local_field_group') ):
 				),
 				'choices' => array(
 					'before' => 'Before',
-					'prepend' => 'Prepend',
-					'append' => 'Append',
 					'after' => 'After',
 				),
 				'default_value' => false,
@@ -357,6 +355,33 @@ if( function_exists('acf_add_local_field_group') ):
 				'instructions' => 'Show the announcement title above the copy.',
 				'required' => 0,
 				'conditional_logic' => 0,
+				'wrapper' => array(
+					'width' => '',
+					'class' => '',
+					'id' => '',
+				),
+				'message' => '',
+				'default_value' => 0,
+				'ui' => 1,
+				'ui_on_text' => '',
+				'ui_off_text' => '',
+			),
+			array(
+				'key' => 'field_announcement_sticky',
+				'label' => 'Is Sticky',
+				'name' => 'announcement_sticky',
+				'type' => 'true_false',
+				'instructions' => 'Announcement will stick to the top or bottom of page depending on scroll position.',
+				'required' => 0,
+				'conditional_logic' => array(
+					array(
+						array(
+							'field' => 'field_6237765762ed2',
+							'operator' => '!=',
+							'value' => 'popup',
+						),
+					),
+				),
 				'wrapper' => array(
 					'width' => '',
 					'class' => '',
