@@ -26,6 +26,11 @@ add_filter( 'acf/settings/url', 'easy_announcements_acf_settings_url' );
 function easy_announcements_acf_settings_url( $url ) {
     return EASY_ANNOUNCEMENTS_PLUGIN_DIR . '/includes/acf/';
 }
-add_filter( 'acf/settings/show_admin', '__return_false' );
+if (
+    !in_array( 'advanced-custom-fields/acf.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) &&
+    !in_array( 'advanced-custom-fields-pro/acf.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) )
+) {
+    add_filter( 'acf/settings/show_admin', '__return_false' );
+}
 
 require EASY_ANNOUNCEMENTS_ABSPATH . '/admin/admin.php';
