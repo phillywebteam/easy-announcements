@@ -5,7 +5,7 @@ $announcement_size = get_field( 'announcement_size', $announcement ) ?? 'default
 $announcement_show_title = ( get_field( 'announcement_show_title', $announcement ) == true ) ? true : false;
 $announcement_url = get_field( 'announcement_url', $announcement ) ?? '';
 
-$announcement_classes = 'modal announcement announcement-' . $announcement_size . ' announcement-' . get_the_ID( $announcement );
+$announcement_classes = 'modal ea-modal announcement announcement-' . $announcement_size . ' announcement-' . get_the_ID( $announcement );
 $announcement_classes .= !empty( get_field( 'announcement_text_alignment', $announcement ) ) ? ' text-' . get_field( 'announcement_text_alignment', $announcement ) : '';
 if ( !empty( $announcement_url ) ) { $announcement_classes .=' has-url'; }
 

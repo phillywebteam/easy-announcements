@@ -104,7 +104,7 @@ function easy_announcements_main() {
 		}
 		<?php echo str_replace( '&amp;', '&', wp_kses_post( $easy_announcements_inject ) ); ?>
 
-		$('.modal').each(function(){
+		$('.modal.ea-modal').each(function(){
 			var modal_id = $(this).attr('id');
 				modal = new bootstrap.Modal('#' + modal_id);
 			modal.show();
