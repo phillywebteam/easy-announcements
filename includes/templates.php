@@ -98,22 +98,31 @@ function easy_announcements_main() {
 ?><script type="text/javascript" id="easy-announcements-inject">
 	var announcement_ids = [<?php echo wp_kses_post( implode( ',', $easy_announcements_ids ) ); ?>];
 
-	jQuery(function($) {
-		if (typeof Cookies.get('easy_announcements') == 'undefined') {
-			set_easy_announcements_cookie();
+	function easy_announcements_defer(method) {
+		if (window.jQuery && window.Cookies) {
+			method();
+		} else {
+			setTimeout(function() { easy_announcements_defer(method) }, 50);
 		}
-		<?php echo str_replace( '&amp;', '&', wp_kses_post( $easy_announcements_inject ) ); ?>
+	}
+	easy_announcements_defer(function() {
+		jQuery(function($) {
+			if (typeof Cookies.get('easy_announcements') == 'undefined') {
+				set_easy_announcements_cookie();
+			}
+			<?php echo str_replace( '&amp;', '&', wp_kses_post( $easy_announcements_inject ) ); ?>
 
-		$('.modal.ea-modal').each(function(){
-			var modal_id = $(this).attr('id');
-				modal = new bootstrap.Modal('#' + modal_id);
-			modal.show();
-			$(document).on('hidden.bs.modal', '#' + modal_id, function(){
-				modal_id = modal_id.replace('modal', '');
-				update_easy_announcements_cookie('dismiss-' + modal_id, 'true', null);
+			$('.modal.ea-modal').each(function(){
+				var modal_id = $(this).attr('id');
+					modal = new bootstrap.Modal('#' + modal_id);
+				modal.show();
+				$(document).on('hidden.bs.modal', '#' + modal_id, function(){
+					modal_id = modal_id.replace('modal', '');
+					update_easy_announcements_cookie('dismiss-' + modal_id, 'true', null);
+				});
 			});
 		});
-	});
+	}
 </script><?php
 			echo ob_get_clean();
 		}

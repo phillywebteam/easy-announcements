@@ -33,6 +33,9 @@ Once you install and active please be sure to visit the settings page to configu
 
 == Changelog ==
 
+= 0.1.6 =
+* Bug fixes
+
 = 0.1.5 =
 * Fixing cookie not saving
 
