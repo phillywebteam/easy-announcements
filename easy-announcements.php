@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 define( 'EASY_ANNOUNCEMENTS_ABSPATH', WP_PLUGIN_DIR . '/easy-announcements' );
 define( 'EASY_ANNOUNCEMENTS_PLUGIN_DIR', plugins_url( '/', __FILE__ ) );
-define( 'EASY_ANNOUNCEMENTS_VERSION', '0.1.6' );
+define( 'EASY_ANNOUNCEMENTS_VERSION', '0.1.6.1' );
 define( 'EASY_ANNOUNCEMENTS_ACF_PATH', EASY_ANNOUNCEMENTS_ABSPATH . '/includes/acf/' );
 define( 'EASY_ANNOUNCEMENTS_ACF_URL', EASY_ANNOUNCEMENTS_ABSPATH . '/includes/acf/' );
 

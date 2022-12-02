@@ -122,7 +122,7 @@ function easy_announcements_main() {
 				});
 			});
 		});
-	}
+	});
 </script><?php
 			echo ob_get_clean();
 		}
