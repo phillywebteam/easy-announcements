@@ -3,7 +3,7 @@ Tags: announcements, popups, banner, heading, announce, advertisement, advertise
 Requires at least: 4.7
 Tested up to: 6.2
 Requires PHP: 7.4
-Stable tag: 0.1.9
+Stable tag: 0.1.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,7 +33,10 @@ Once you install and active please be sure to visit the settings page to configu
 
 == Changelog ==
 
-= 0.1.8 =
+= 0.1.9.1 =
+* Bug fix surrounding ACF
+
+= 0.1.9 =
 * Updated ACF version to 6.1.6 for security patches
 
 = 0.1.8 =
