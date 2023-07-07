@@ -50,7 +50,7 @@ function get_easy_announcements_cookie( $key ) {
 
 function check_easy_announcements_cookie( $key ) {
 	if ( isset( $_COOKIE['easy_announcements'] ) ) {
-		$cookie = json_decode( stripslashes( base64_decode( $cookie ) ), true );
+		$cookie = json_decode( stripslashes( base64_decode( $_COOKIE['easy_announcements'] ) ) , true );
 		if ( array_key_exists( $key, $cookie ) ) {
 			return ( $cookie[$key] == '' ) ? false : true;
 		} else {
@@ -182,30 +182,24 @@ function easy_announcements_contrast( $hexColor ) {
 function easy_announcements_show( $announcement ) {
 	$announcement_id = get_the_ID( $announcement );
 
-	global $post;
-	$current_page_ID = $post->ID;
+	global $wp_query;
+	$current_page_ID = $wp_query->post->ID;
 
 	$show_announcement = true;
 
-	$announcement_pages_include = get_field( 'announcement_pages_include', $announcement_id ) ?? '';
-	$announcement_pages_exclude = get_field( 'announcement_pages_exclude', $announcement_id ) ?? '';
+	$announcement_pages_include = get_field( 'announcement_pages_include', $announcement_id ) ?? array();
+	$announcement_pages_exclude = get_field( 'announcement_pages_exclude', $announcement_id ) ?? array();
 	$announcement_dismissable = get_field( 'announcement_dismissable', $announcement_id ) ?? false;
 	$announcement_placement = get_field( 'announcement_placement', $announcement_id ) ?? '';
 
-	if ( $announcement_pages_include != '' ) {
-		if ( in_array( $current_page_ID, $announcement_pages_include ) ) {
-			$show_announcement = true;
-		} else {
+	if ( ! empty( $announcement_pages_include ) ) {
+		if ( ! in_array( $current_page_ID, $announcement_pages_include ) ) {
 			$show_announcement = false;
 		}
-	} else if ( $announcement_pages_exclude != '' ) {
+	} else if ( ! empty( $announcement_pages_exclude ) ) {
 		if ( in_array( $current_page_ID, $announcement_pages_exclude ) ) {
 			$show_announcement = false;
-		} else {
-			$show_announcement = true;
 		}
-	} else {
-		$show_announcement = true;
 	}
 
 	if ( $announcement_dismissable == true || $announcement_placement == 'popup' ) {
