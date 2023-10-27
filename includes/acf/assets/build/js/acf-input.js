@@ -3686,7 +3686,8 @@
       'click .choices-list .acf-rel-item': 'onClickAdd',
       'keypress .choices-list .acf-rel-item': 'onKeypressFilter',
       'keypress .values-list .acf-rel-item': 'onKeypressFilter',
-      'click [data-name="remove_item"]': 'onClickRemove'
+      'click [data-name="remove_item"]': 'onClickRemove',
+      'touchstart .values-list .acf-rel-item': 'onTouchStartValues'
     },
     $control: function () {
       return this.$('.acf-relationship');
@@ -3857,6 +3858,10 @@
 
       // trigger change
       this.$input().trigger('change');
+    },
+    onTouchStartValues: function (e, $el) {
+      $(this.$listItems('values')).removeClass('relationship-hover');
+      $el.addClass('relationship-hover');
     },
     maybeFetch: function () {
       // vars
@@ -4095,15 +4100,34 @@
       duplicateField: 'onDuplicate'
     },
     findFields: function () {
-      let filter = '.acf-field';
-      if (this.get('key') === 'acf_field_settings_tabs') {
-        filter = '.acf-field-settings-main';
-      }
-      if (this.get('key') === 'acf_field_group_settings_tabs') {
-        filter = '.field-group-settings-tab';
-      }
-      if (this.get('key') === 'acf_browse_fields_tabs') {
-        filter = '.acf-field-types-tab';
+      let filter;
+
+      /**
+       * Tabs in the admin UI that can be extended by third
+       * parties have the child settings wrapped inside an extra div,
+       * so we need to look for that instead of an adjacent .acf-field.
+       */
+      switch (this.get('key')) {
+        case 'acf_field_settings_tabs':
+          filter = '.acf-field-settings-main';
+          break;
+        case 'acf_field_group_settings_tabs':
+          filter = '.field-group-settings-tab';
+          break;
+        case 'acf_browse_fields_tabs':
+          filter = '.acf-field-types-tab';
+          break;
+        case 'acf_post_type_tabs':
+          filter = '.acf-post-type-advanced-settings';
+          break;
+        case 'acf_taxonomy_tabs':
+          filter = '.acf-taxonomy-advanced-settings';
+          break;
+        case 'acf_ui_options_page_tabs':
+          filter = '.acf-ui-options-page-advanced-settings';
+          break;
+        default:
+          filter = '.acf-field';
       }
       return this.$el.nextUntil('.acf-field-tab', filter);
     },
@@ -4231,6 +4255,7 @@
     active: false,
     actions: {
       refresh: 'onRefresh',
+      resize: 'onRefresh',
       close_field_object: 'onCloseFieldObject'
     },
     data: {
@@ -4403,21 +4428,28 @@
       return tab;
     },
     onRefresh: function () {
-      // only for left placements
-      if (this.get('placement') !== 'left') {
+      // Don't run on field group tabs.
+      if (['acf_field_settings_tabs', 'acf_field_group_settings_tabs'].includes(this.get('key'))) {
         return;
       }
 
-      // vars
-      var $parent = this.$el.parent();
-      var $list = this.$el.children('ul');
-      var attribute = $parent.is('td') ? 'height' : 'min-height';
+      // Block editor needs timeout to run after script is finished.
+      setTimeout(() => {
+        const $list = this.$el.children('ul');
+        let $element = this.$el;
+        let attribute = 'height';
+        let height;
+        if (this.get('placement') === 'left') {
+          $element = this.$el.parent();
+          attribute = $element.is('td') ? 'height' : 'min-height';
 
-      // find height (minus 1 for border-bottom)
-      var height = $list.position().top + $list.outerHeight(true) - 1;
-
-      // add css
-      $parent.css(attribute, height);
+          // Find height (minus 1 for border-bottom).
+          height = $list.position().top + $list.outerHeight(true) - 1;
+        } else {
+          height = Math.ceil($list.outerHeight(true));
+        }
+        $element.css(attribute, height);
+      }, 0);
     },
     onCloseFieldObject: function (fieldObject) {
       const tab = this.getVisible().find(item => {
@@ -6316,11 +6348,13 @@
       refresh: 'renderGroups'
     },
     renderGroups: function () {
-      // loop
-      var self = this;
-      $('.acf-fields:visible').each(function () {
-        self.renderGroup($(this));
-      });
+      // Set timeout so the editor fires at the right time.
+      setTimeout(() => {
+        var self = this;
+        $('.acf-fields:visible').each(function () {
+          self.renderGroup($(this));
+        });
+      }, 0);
     },
     renderGroup: function ($el) {
       // vars
@@ -7819,7 +7853,7 @@
     wait: 'prepare',
     initialize: function () {
       // Bail early if not Gutenberg.
-      if (!acf.isGutenberg()) {
+      if (!acf.isGutenbergPostEditor()) {
         return;
       }
 
@@ -8322,7 +8356,6 @@
       }
 
       // filter for 3rd party customization
-      //options = acf.applyFilters( 'select2_args', options, $select, this );
       if (!options.suppressFilters) {
         var field = this.get('field');
         options = acf.applyFilters('select2_args', options, $select, this.data, field || false, this);
@@ -9424,6 +9457,11 @@
         this.set('notice', notice);
       }
 
+      // If in a modal, don't try to scroll.
+      if (this.$el.parents('.acf-popup-box').length) {
+        return;
+      }
+
       // if no $scrollTo, set to message
       if (!$scrollTo) {
         $scrollTo = this.get('notice').$el;
@@ -9829,6 +9867,12 @@
 
     // front end form
     var $wrap = $form.find('.acf-form-submit');
+    if ($wrap.length) {
+      return $wrap;
+    }
+
+    // ACF 6.2 options page modal
+    var $wrap = $('#acf-create-options-page-form .acf-actions');
     if ($wrap.length) {
       return $wrap;
     }
@@ -10286,7 +10330,7 @@
           }
         }).then(function () {
           return savePost.apply(_this, _args);
-        }).catch(function (err) {
+        }, err => {
           // Nothing to do here, user is alerted of validation issues.
         });
       };
