@@ -1,11 +1,11 @@
-/******/ (function() { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "./src/advanced-custom-fields-pro/assets/src/js/_browse-fields-modal.js":
 /*!******************************************************************************!*\
   !*** ./src/advanced-custom-fields-pro/assets/src/js/_browse-fields-modal.js ***!
   \******************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -104,7 +104,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       const iconName = fieldType.name.replaceAll('_', '-');
       return `
 			<a href="#" class="acf-field-type" data-field-type="${fieldType.name}">
-				${fieldType.pro && !acf.get('is_pro') ? '<span class="field-type-requires-pro"><i class="acf-icon acf-icon-lock"></i>PRO</span>' : fieldType.pro ? '<span class="field-type-requires-pro">PRO</span>' : ''}
+				${fieldType.pro && !acf.get('is_pro') ? '<span class="field-type-requires-pro not-pro"></span>' : fieldType.pro ? '<span class="field-type-requires-pro"></span>' : ''}
 				<i class="field-type-icon field-type-icon-${iconName}"></i>
 				<span class="field-type-label">${fieldType.label}</span>
 			</a>
@@ -142,9 +142,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         this.$el.find('.field-type-image').hide();
       }
       const isPro = acf.get('is_pro');
+      const isActive = acf.get('isLicenseActive');
       const $upgateToProButton = this.$el.find('.acf-btn-pro');
       const $upgradeToUnlockButton = this.$el.find('.field-type-upgrade-to-unlock');
-      if (args.pro && !isPro) {
+      if (args.pro && (!isPro || !isActive)) {
         $upgateToProButton.show();
         $upgateToProButton.attr('href', $upgateToProButton.data('urlBase') + fieldType);
         $upgradeToUnlockButton.show();
@@ -284,7 +285,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 /*!************************************************************************************!*\
   !*** ./src/advanced-custom-fields-pro/assets/src/js/_field-group-compatibility.js ***!
   \************************************************************************************/
-/***/ (function() {
+/***/ (() => {
 
 (function ($, undefined) {
   var _acf = acf.getCompatibility(acf);
@@ -509,7 +510,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 /*!*********************************************************************************!*\
   !*** ./src/advanced-custom-fields-pro/assets/src/js/_field-group-conditions.js ***!
   \*********************************************************************************/
-/***/ (function() {
+/***/ (() => {
 
 (function ($, undefined) {
   /**
@@ -564,6 +565,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     },
     $tabLabel: function () {
       return this.fieldObject.$el.find('.conditional-logic-badge');
+    },
+    $conditionalValueSelect: function () {
+      return this.$('.condition-rule-value');
     },
     open: function () {
       var $div = this.$control();
@@ -704,51 +708,57 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       if (!this.ruleData('field') || !this.ruleData('operator')) {
         return;
       }
-
-      // vars
       var $select = this.$input('value');
       var $td = this.$td('value');
-      var val = $select.val();
+      var currentVal = $select.val();
+      var savedValue = this.$rule[0].getAttribute('data-value');
 
       // get selected field
       var $field = acf.findFieldObject(this.ruleData('field'));
       var field = acf.getFieldObject($field);
-
       // get selected field conditions
       var conditionTypes = acf.getConditionTypes({
         fieldType: field.getType(),
         operator: this.ruleData('operator')
       });
-
-      // html
       var conditionType = conditionTypes[0].prototype;
       var choices = conditionType.choices(field);
-
-      // create html: array
-      if (choices instanceof Array) {
-        var $newSelect = $('<select></select>');
+      let $newSelect;
+      if (choices instanceof jQuery && !!choices.data('acfSelect2Props')) {
+        $newSelect = $select.clone();
+        // If converting from a disabled input, we need to convert it to an active select.
+        if ($newSelect.is('input')) {
+          var classes = $select.attr('class');
+          const $rebuiltSelect = $('<select></select>').addClass(classes).val(savedValue);
+          $newSelect = $rebuiltSelect;
+        }
+        acf.addAction('acf_conditional_value_rendered', function () {
+          acf.newSelect2($newSelect, choices.data('acfSelect2Props'));
+        });
+      } else if (choices instanceof Array) {
+        this.$conditionalValueSelect().removeClass('select2-hidden-accessible');
+        $newSelect = $('<select></select>');
         acf.renderSelect($newSelect, choices);
-
-        // create html: string (<input />)
       } else {
-        var $newSelect = $(choices);
+        this.$conditionalValueSelect().removeClass('select2-hidden-accessible');
+        $newSelect = $(choices);
       }
 
       // append
       $select.detach();
       $td.html($newSelect);
 
-      // copy attrs
       // timeout needed to avoid browser bug where "disabled" attribute is not applied
       setTimeout(function () {
         ['class', 'name', 'id'].map(function (attr) {
           $newSelect.attr(attr, $select.attr(attr));
         });
+        $select.val(savedValue);
+        acf.doAction('acf_conditional_value_rendered');
       }, 0);
-
       // select existing value (if not a disabled input)
       if (!$newSelect.prop('disabled')) {
-        acf.val($newSelect, val, true);
+        acf.val($newSelect, currentVal, true);
       }
 
       // set
@@ -772,6 +782,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
       // remove all tr's except the first one
       $group2.find('tr').not(':first').remove();
+
+      // Find the remaining tr and render
+      var $tr = $group2.find('tr');
+      this.renderRule($tr);
 
       // save field
       this.fieldObject.save();
@@ -882,7 +896,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 /*!****************************************************************************!*\
   !*** ./src/advanced-custom-fields-pro/assets/src/js/_field-group-field.js ***!
   \****************************************************************************/
-/***/ (function() {
+/***/ (() => {
 
 (function ($, undefined) {
   acf.FieldObject = acf.Model.extend({
@@ -928,7 +942,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       // The menu order
       //menu_order: 0
     },
-
     setup: function ($field) {
       // set $el
       this.$el = $field;
@@ -1129,15 +1142,15 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         templateResult: function (selection) {
           if (selection.loading || selection.element && selection.element.nodeName === 'OPTGROUP') {
             var $selection = $('<span class="acf-selection"></span>');
-            $selection.html(acf.escHtml(selection.text));
+            $selection.html(acf.strEscape(selection.text));
           } else {
-            var $selection = $('<i class="field-type-icon field-type-icon-' + selection.id.replaceAll('_', '-') + '"></i><span class="acf-selection has-icon">' + acf.escHtml(selection.text) + '</span>');
+            var $selection = $('<i class="field-type-icon field-type-icon-' + selection.id.replaceAll('_', '-') + '"></i><span class="acf-selection has-icon">' + acf.strEscape(selection.text) + '</span>');
           }
           $selection.data('element', selection.element);
           return $selection;
         },
         templateSelection: function (selection) {
-          var $selection = $('<i class="field-type-icon field-type-icon-' + selection.id.replaceAll('_', '-') + '"></i><span class="acf-selection has-icon">' + acf.escHtml(selection.text) + '</span>');
+          var $selection = $('<i class="field-type-icon field-type-icon-' + selection.id.replaceAll('_', '-') + '"></i><span class="acf-selection has-icon">' + acf.strEscape(selection.text) + '</span>');
           $selection.data('element', selection.element);
           return $selection;
         }
@@ -1153,8 +1166,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       this.fieldTypeSelect2.$el.parent().on('keydown', '.select2-selection.select2-selection--single', this.onKeyDownSelect);
     },
     addProFields: function () {
-      // Make sure we're only running this on free version.
-      if (acf.get('is_pro')) {
+      // Don't run if we have a valid license.
+      if (acf.get('is_pro') && acf.get('isLicenseActive')) {
         return;
       }
 
@@ -1169,7 +1182,20 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       const $contentGroup = $fieldTypeSelect.find('optgroup option[value="image"]').parent();
       for (const [name, field] of Object.entries(PROFieldTypes)) {
         const $useGroup = field.category === 'content' ? $contentGroup : $layoutGroup;
-        $useGroup.append('<option value="null" disabled="disabled">' + field.label + ' (' + acf.__('PRO Only') + ')</option>');
+        const $existing = $useGroup.children('[value="' + name + '"]');
+        const label = `${acf.strEscape(field.label)} (${acf.strEscape(acf.__('PRO Only'))})`;
+        if ($existing.length) {
+          // Already added by pro, update existing option.
+          $existing.text(label);
+
+          // Don't disable if already selected (prevents re-save from overriding field type).
+          if ($fieldTypeSelect.val() !== name) {
+            $existing.attr('disabled', 'disabled');
+          }
+        } else {
+          // Append new disabled option.
+          $useGroup.append(`<option value="null" disabled="disabled">${label}</option>`);
+        }
       }
       $fieldTypeSelect.addClass('acf-free-field-type');
     },
@@ -1195,7 +1221,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       $handle.find('.li-field-label strong a').html(label);
 
       // update name
-      $handle.find('.li-field-name').html(this.makeCopyable(name));
+      $handle.find('.li-field-name').html(this.makeCopyable(acf.strSanitize(name)));
 
       // update type
       const iconName = acf.strSlugify(this.getType());
@@ -1216,17 +1242,32 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     },
     onClickCopy: function (e) {
       e.stopPropagation();
-      if (!navigator.clipboard) return;
-      navigator.clipboard.writeText($(e.target).text()).then(() => {
-        $(e.target).addClass('copied');
+      if (!navigator.clipboard || $(e.target).is('input')) return;
+
+      // Find the value to copy depending on input or text elements.
+      let copyValue;
+      if ($(e.target).hasClass('acf-input-wrap')) {
+        copyValue = $(e.target).find('input').first().val();
+      } else {
+        copyValue = $(e.target).text().trim();
+      }
+      navigator.clipboard.writeText(copyValue).then(() => {
+        $(e.target).closest('.copyable').addClass('copied');
         setTimeout(function () {
-          $(e.target).removeClass('copied');
+          $(e.target).closest('.copyable').removeClass('copied');
         }, 2000);
       });
     },
     onClickEdit: function (e) {
-      $target = $(e.target);
-      if ($target.parent().hasClass('row-options') && !$target.hasClass('edit-field')) return;
+      const $target = $(e.target);
+
+      // Bail out if a pro field without a license.
+      if (acf.get('is_pro') && !acf.get('isLicenseActive') && !acf.get('isLicenseExpired') && acf.get('PROFieldTypes').hasOwnProperty(this.getType())) {
+        return;
+      }
+      if ($target.parent().hasClass('row-options') && !$target.hasClass('edit-field')) {
+        return;
+      }
       this.isOpen() ? this.close() : this.open();
     },
     onChangeSettingsTab: function () {
@@ -1397,12 +1438,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       }
     },
     onChangeName: function (e, $el) {
-      // set
-      var name = $el.val();
-      this.set('name', name);
-
-      // error
-      if (name.substr(0, 6) === 'field_') {
+      const sanitizedName = acf.strSanitize($el.val(), false);
+      $el.val(sanitizedName);
+      this.set('name', sanitizedName);
+      if (sanitizedName.startsWith('field_')) {
         alert(acf.__('The string "field_" may not be used at the start of a field name'));
       }
     },
@@ -1805,7 +1844,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 /*!*****************************************************************************!*\
   !*** ./src/advanced-custom-fields-pro/assets/src/js/_field-group-fields.js ***!
   \*****************************************************************************/
-/***/ (function() {
+/***/ (() => {
 
 (function ($, undefined) {
   /**
@@ -2268,7 +2307,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 /*!********************************************************************************!*\
   !*** ./src/advanced-custom-fields-pro/assets/src/js/_field-group-locations.js ***!
   \********************************************************************************/
-/***/ (function() {
+/***/ (() => {
 
 (function ($, undefined) {
   /**
@@ -2298,8 +2337,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       this.updateGroupsClass();
     },
     addProLocations: function () {
-      // Make sure we're only running this on free version.
-      if (acf.get('is_pro')) {
+      // Make sure we're only running if we don't have a valid license.
+      if (acf.get('is_pro') && acf.get('isLicenseActive')) {
         return;
       }
 
@@ -2307,8 +2346,17 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       const PROLocationTypes = acf.get('PROLocationTypes');
       if (typeof PROLocationTypes !== 'object') return;
       const $formsGroup = this.$el.find('select.refresh-location-rule').find('optgroup[label="Forms"]');
+      const proOnlyText = ` (${acf.__('PRO Only')})`;
       for (const [key, name] of Object.entries(PROLocationTypes)) {
-        $formsGroup.append('<option value="null" disabled="disabled">' + name + ' (' + acf.__('PRO Only') + ')</option>');
+        if (!acf.get('is_pro')) {
+          $formsGroup.append(`<option value="null" disabled="disabled">${acf.strEscape(name)}${acf.strEscape(proOnlyText)}</option>`);
+        } else {
+          $formsGroup.find('option[value=' + key + ']').not(':selected').prop('disabled', 'disabled').text(`${acf.strEscape(name)}${acf.strEscape(proOnlyText)}`);
+        }
+      }
+      const $addNewOptionsPage = this.$el.find('select.location-rule-value option[value=add_new_options_page]');
+      if ($addNewOptionsPage.length) {
+        $addNewOptionsPage.attr('disabled', 'disabled');
       }
     },
     onClickAddRule: function (e, $el) {
@@ -2353,6 +2401,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
       // temp disable
       acf.disable($rule.find('td.value'));
+      const self = this;
 
       // ajax
       $.ajax({
@@ -2363,6 +2412,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         success: function (html) {
           if (!html) return;
           $rule.replaceWith(html);
+          self.addProLocations();
         }
       });
     },
@@ -2401,7 +2451,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 /*!*******************************************************************************!*\
   !*** ./src/advanced-custom-fields-pro/assets/src/js/_field-group-settings.js ***!
   \*******************************************************************************/
-/***/ (function() {
+/***/ (() => {
 
 (function ($, undefined) {
   /**
@@ -2688,7 +2738,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 /*!**********************************************************************!*\
   !*** ./src/advanced-custom-fields-pro/assets/src/js/_field-group.js ***!
   \**********************************************************************/
-/***/ (function() {
+/***/ (() => {
 
 (function ($, undefined) {
   /**
@@ -2725,6 +2775,14 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       var _field$data;
       if ((field === null || field === void 0 || (_field$data = field.data) === null || _field$data === void 0 ? void 0 : _field$data.call(field, 'key')) !== 'bidirectional_target') return args;
       args.dropdownCssClass = 'field-type-select-results';
+
+      // Check for a full modern version of select2 like the one provided by ACF.
+      try {
+        $.fn.select2.amd.require('select2/compat/dropdownCss');
+      } catch (err) {
+        console.warn('ACF was not able to load the full version of select2 due to a conflicting version provided by another plugin or theme taking precedence. Skipping styling of bidirectional settings.');
+        delete args.dropdownCssClass;
+      }
       args.templateResult = function (selection) {
         if ('undefined' !== typeof selection.element) {
           return selection;
@@ -2992,29 +3050,24 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 /*!*******************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/esm/defineProperty.js ***!
   \*******************************************************************/
-/***/ (function(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": function() { return /* binding */ _defineProperty; }
+/* harmony export */   "default": () => (/* binding */ _defineProperty)
 /* harmony export */ });
 /* harmony import */ var _toPropertyKey_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./toPropertyKey.js */ "./node_modules/@babel/runtime/helpers/esm/toPropertyKey.js");
 
-function _defineProperty(obj, key, value) {
-  key = (0,_toPropertyKey_js__WEBPACK_IMPORTED_MODULE_0__["default"])(key);
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
+function _defineProperty(e, r, t) {
+  return (r = (0,_toPropertyKey_js__WEBPACK_IMPORTED_MODULE_0__["default"])(r)) in e ? Object.defineProperty(e, r, {
+    value: t,
+    enumerable: !0,
+    configurable: !0,
+    writable: !0
+  }) : e[r] = t, e;
 }
+
 
 /***/ }),
 
@@ -3022,25 +3075,26 @@ function _defineProperty(obj, key, value) {
 /*!****************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/esm/toPrimitive.js ***!
   \****************************************************************/
-/***/ (function(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": function() { return /* binding */ _toPrimitive; }
+/* harmony export */   "default": () => (/* binding */ toPrimitive)
 /* harmony export */ });
 /* harmony import */ var _typeof_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./typeof.js */ "./node_modules/@babel/runtime/helpers/esm/typeof.js");
 
-function _toPrimitive(input, hint) {
-  if ((0,_typeof_js__WEBPACK_IMPORTED_MODULE_0__["default"])(input) !== "object" || input === null) return input;
-  var prim = input[Symbol.toPrimitive];
-  if (prim !== undefined) {
-    var res = prim.call(input, hint || "default");
-    if ((0,_typeof_js__WEBPACK_IMPORTED_MODULE_0__["default"])(res) !== "object") return res;
+function toPrimitive(t, r) {
+  if ("object" != (0,_typeof_js__WEBPACK_IMPORTED_MODULE_0__["default"])(t) || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || "default");
+    if ("object" != (0,_typeof_js__WEBPACK_IMPORTED_MODULE_0__["default"])(i)) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
-  return (hint === "string" ? String : Number)(input);
+  return ("string" === r ? String : Number)(t);
 }
+
 
 /***/ }),
 
@@ -3048,21 +3102,22 @@ function _toPrimitive(input, hint) {
 /*!******************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/esm/toPropertyKey.js ***!
   \******************************************************************/
-/***/ (function(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": function() { return /* binding */ _toPropertyKey; }
+/* harmony export */   "default": () => (/* binding */ toPropertyKey)
 /* harmony export */ });
 /* harmony import */ var _typeof_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./typeof.js */ "./node_modules/@babel/runtime/helpers/esm/typeof.js");
 /* harmony import */ var _toPrimitive_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./toPrimitive.js */ "./node_modules/@babel/runtime/helpers/esm/toPrimitive.js");
 
 
-function _toPropertyKey(arg) {
-  var key = (0,_toPrimitive_js__WEBPACK_IMPORTED_MODULE_1__["default"])(arg, "string");
-  return (0,_typeof_js__WEBPACK_IMPORTED_MODULE_0__["default"])(key) === "symbol" ? key : String(key);
+function toPropertyKey(t) {
+  var i = (0,_toPrimitive_js__WEBPACK_IMPORTED_MODULE_1__["default"])(t, "string");
+  return "symbol" == (0,_typeof_js__WEBPACK_IMPORTED_MODULE_0__["default"])(i) ? i : i + "";
 }
+
 
 /***/ }),
 
@@ -3070,12 +3125,12 @@ function _toPropertyKey(arg) {
 /*!***********************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/esm/typeof.js ***!
   \***********************************************************/
-/***/ (function(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": function() { return /* binding */ _typeof; }
+/* harmony export */   "default": () => (/* binding */ _typeof)
 /* harmony export */ });
 function _typeof(o) {
   "@babel/helpers - typeof";
@@ -3086,6 +3141,7 @@ function _typeof(o) {
     return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
   }, _typeof(o);
 }
+
 
 /***/ })
 
@@ -3117,49 +3173,49 @@ function _typeof(o) {
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat get default export */
-/******/ 	!function() {
+/******/ 	(() => {
 /******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = function(module) {
+/******/ 		__webpack_require__.n = (module) => {
 /******/ 			var getter = module && module.__esModule ?
-/******/ 				function() { return module['default']; } :
-/******/ 				function() { return module; };
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
 /******/ 			__webpack_require__.d(getter, { a: getter });
 /******/ 			return getter;
 /******/ 		};
-/******/ 	}();
+/******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/define property getters */
-/******/ 	!function() {
+/******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = function(exports, definition) {
+/******/ 		__webpack_require__.d = (exports, definition) => {
 /******/ 			for(var key in definition) {
 /******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
 /******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 				}
 /******/ 			}
 /******/ 		};
-/******/ 	}();
+/******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	!function() {
-/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
-/******/ 	}();
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
-/******/ 	!function() {
+/******/ 	(() => {
 /******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = function(exports) {
+/******/ 		__webpack_require__.r = (exports) => {
 /******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
 /******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
-/******/ 	}();
+/******/ 	})();
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
-!function() {
+(() => {
 "use strict";
 /*!*************************************************************************!*\
   !*** ./src/advanced-custom-fields-pro/assets/src/js/acf-field-group.js ***!
@@ -3188,7 +3244,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-}();
+})();
+
 /******/ })()
 ;
 //# sourceMappingURL=acf-field-group.js.map

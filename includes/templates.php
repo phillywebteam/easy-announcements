@@ -14,24 +14,33 @@ function easy_announcements_main() {
 		while ( $easy_announcements_loop->have_posts() ) : 
 			$ea_post = $easy_announcements_loop->the_post();
 			if ( !empty( get_field( 'announcement_placement', $ea_post ) ) && !empty( get_field( 'announcement_attachment', $ea_post ) ) ) {
-				$easy_announcements_ids[] = get_the_ID( $ea_post );
+				$ea_post_id = get_the_ID( $ea_post );
+				$easy_announcements_ids[] = $ea_post_id;
 				$placement = get_field( 'announcement_placement', $ea_post ) ?? '';
 				$attachment = get_field( 'announcement_attachment', $ea_post ) ?? '';
 				$show_announcement = easy_announcements_show( $ea_post );
 
 				if ( $show_announcement ) {
-					ob_start();
-					switch ( $placement ) {
-						case 'popup':
-							include EASY_ANNOUNCEMENTS_ABSPATH . '/templates/popup.php';
-							break;
-						default:
-							include EASY_ANNOUNCEMENTS_ABSPATH . '/templates/default.php';
-							break;
-					}
-					$this_announcement = ob_get_clean();
+					$this_announcement = '';
 
-					if ( !empty( $this_announcement ) ) $easy_announcements[$placement][$attachment][get_the_ID( $ea_post )] = $this_announcement;
+					if (!get_transient('easy_announcements_' . $ea_post_id)) {
+						ob_start();
+						switch ( $placement ) {
+							case 'popup':
+								include EASY_ANNOUNCEMENTS_ABSPATH . '/templates/popup.php';
+								break;
+							default:
+								include EASY_ANNOUNCEMENTS_ABSPATH . '/templates/default.php';
+								break;
+						}
+						$this_announcement = ob_get_clean();
+
+						set_transient('easy_announcements_' . $ea_post_id, $this_announcement, 60 * 60 * 24);
+					} else {
+						$this_announcement = get_transient('easy_announcements_' . $ea_post_id);
+					}
+
+					if ( !empty( $this_announcement ) ) $easy_announcements[$placement][$attachment][$ea_post_id] = $this_announcement;
 				}
 			}
 		endwhile;
