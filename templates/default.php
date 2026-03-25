@@ -7,8 +7,8 @@ $announcement_size        = get_post_meta( $post_id, 'announcement_size', true )
 $announcement_show_title  = get_post_meta( $post_id, 'announcement_show_title', true )  === '1';
 $announcement_url         = get_post_meta( $post_id, 'announcement_url', true )         ?: '';
 
-$announcement_color_background = easy_announcements_color( 'background', $announcement_color );
-$announcement_color_content    = easy_announcements_color( 'content', $announcement_color );
+$announcement_color_background = Easy_Announcements_Utils::get_color( 'background', $announcement_color );
+$announcement_color_content    = Easy_Announcements_Utils::get_color( 'content', $announcement_color );
 
 if ( $announcement_color === 'custom' ) {
 	$custom_bg = get_post_meta( $post_id, 'announcement_custom_color_background', true );
@@ -17,7 +17,7 @@ if ( $announcement_color === 'custom' ) {
 		$custom_fg = get_post_meta( $post_id, 'announcement_custom_color_content', true );
 		$announcement_color_content    = ! empty( $custom_fg )
 			? $custom_fg
-			: easy_announcements_contrast( $announcement_color_background );
+			: Easy_Announcements_Utils::get_contrast_color( $announcement_color_background );
 	}
 }
 

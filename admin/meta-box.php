@@ -1,58 +1,65 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-add_action( 'add_meta_boxes', 'easy_announcements_add_meta_box' );
-function easy_announcements_add_meta_box() {
-	add_meta_box(
-		'easy-announcements-settings',
-		__( 'Announcement Settings', 'easy-announcements' ),
-		'easy_announcements_render_meta_box',
-		'announcement',
-		'normal',
-		'high'
-	);
-}
-
-function easy_announcements_render_meta_box( $post ) {
-	wp_nonce_field( 'easy_announcements_save_meta', 'easy_announcements_nonce' );
-
-	$placement   = get_post_meta( $post->ID, 'announcement_placement', true )               ?: '';
-	$attachment  = get_post_meta( $post->ID, 'announcement_attachment', true )              ?: 'after';
-	$pages_inc   = get_post_meta( $post->ID, 'announcement_pages_include', true )           ?: [];
-	$pages_exc   = get_post_meta( $post->ID, 'announcement_pages_exclude', true )           ?: [];
-	$expiration  = get_post_meta( $post->ID, 'announcement_expiration', true )              ?: '';
-	$color       = get_post_meta( $post->ID, 'announcement_color', true )                   ?: 'primary';
-	$custom_bg   = get_post_meta( $post->ID, 'announcement_custom_color_background', true ) ?: '';
-	$custom_fg   = get_post_meta( $post->ID, 'announcement_custom_color_content', true )    ?: '';
-	$size        = get_post_meta( $post->ID, 'announcement_size', true )                    ?: 'default';
-	$text_align  = get_post_meta( $post->ID, 'announcement_text_alignment', true )          ?: '';
-	$text_size   = get_post_meta( $post->ID, 'announcement_text_size', true )               ?: 'default';
-	$url         = get_post_meta( $post->ID, 'announcement_url', true )                     ?: '';
-	$show_title  = get_post_meta( $post->ID, 'announcement_show_title', true );
-	$sticky      = get_post_meta( $post->ID, 'announcement_sticky', true );
-	$dismissable  = get_post_meta( $post->ID, 'announcement_dismissable', true );
-	$popup_delay  = (int) get_post_meta( $post->ID, 'announcement_popup_delay', true );
-
-	if ( ! is_array( $pages_inc ) ) $pages_inc = [];
-	if ( ! is_array( $pages_exc ) ) $pages_exc = [];
-
-	$all_pages = get_posts( [
-		'post_type'      => 'page',
-		'posts_per_page' => -1,
-		'post_status'    => 'publish',
-		'orderby'        => 'title',
-		'order'          => 'ASC',
-	] );
-
-	// Convert stored Y-m-d H:i:s to datetime-local input format Y-m-dTH:i
-	$expiration_input = '';
-	if ( ! empty( $expiration ) ) {
-		$dt = DateTime::createFromFormat( 'Y-m-d H:i:s', $expiration, wp_timezone() );
-		if ( $dt ) {
-			$expiration_input = $dt->format( 'Y-m-d\TH:i' );
-		}
+/**
+ * Easy Announcements Meta Box
+ */
+class Easy_Announcements_Meta_Box {
+	public function __construct() {
+		add_action( 'add_meta_boxes', [ $this, 'add_meta_box' ] );
 	}
-	?>
+
+	public function add_meta_box() {
+		add_meta_box(
+			'easy-announcements-settings',
+			__( 'Announcement Settings', 'easy-announcements' ),
+			[ $this, 'render' ],
+			'announcement',
+			'normal',
+			'high'
+		);
+	}
+
+	public function render( $post ) {
+		wp_nonce_field( 'easy_announcements_save_meta', 'easy_announcements_nonce' );
+
+		$placement   = get_post_meta( $post->ID, 'announcement_placement', true )               ?: '';
+		$attachment  = get_post_meta( $post->ID, 'announcement_attachment', true )              ?: 'after';
+		$pages_inc   = get_post_meta( $post->ID, 'announcement_pages_include', true )           ?: [];
+		$pages_exc   = get_post_meta( $post->ID, 'announcement_pages_exclude', true )           ?: [];
+		$expiration  = get_post_meta( $post->ID, 'announcement_expiration', true )              ?: '';
+		$color       = get_post_meta( $post->ID, 'announcement_color', true )                   ?: 'primary';
+		$custom_bg   = get_post_meta( $post->ID, 'announcement_custom_color_background', true ) ?: '';
+		$custom_fg   = get_post_meta( $post->ID, 'announcement_custom_color_content', true )    ?: '';
+		$size        = get_post_meta( $post->ID, 'announcement_size', true )                    ?: 'default';
+		$text_align  = get_post_meta( $post->ID, 'announcement_text_alignment', true )          ?: '';
+		$text_size   = get_post_meta( $post->ID, 'announcement_text_size', true )               ?: 'default';
+		$url         = get_post_meta( $post->ID, 'announcement_url', true )                     ?: '';
+		$show_title  = get_post_meta( $post->ID, 'announcement_show_title', true );
+		$sticky      = get_post_meta( $post->ID, 'announcement_sticky', true );
+		$dismissable  = get_post_meta( $post->ID, 'announcement_dismissable', true );
+		$popup_delay  = (int) get_post_meta( $post->ID, 'announcement_popup_delay', true );
+
+		if ( ! is_array( $pages_inc ) ) $pages_inc = [];
+		if ( ! is_array( $pages_exc ) ) $pages_exc = [];
+
+		$all_pages = get_posts( [
+			'post_type'      => 'page',
+			'posts_per_page' => -1,
+			'post_status'    => 'publish',
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		] );
+
+		// Convert stored Y-m-d H:i:s to datetime-local input format Y-m-dTH:i
+		$expiration_input = '';
+		if ( ! empty( $expiration ) ) {
+			$dt = DateTime::createFromFormat( 'Y-m-d H:i:s', $expiration, wp_timezone() );
+			if ( $dt ) {
+				$expiration_input = $dt->format( 'Y-m-d\TH:i' );
+			}
+		}
+		?>
 	<div class="ea-meta-wrap">
 
 		<div class="ea-row">
@@ -123,7 +130,7 @@ function easy_announcements_render_meta_box( $post ) {
 			<div class="ea-field">
 				<div class="ea-color-buttons">
 					<?php foreach ( [ 'primary', 'secondary', 'success', 'danger', 'warning', 'info' ] as $c ) :
-						$bg = easy_announcements_color( 'background', $c );
+					$bg = Easy_Announcements_Utils::get_color( 'background', $c );
 					?>
 						<label>
 							<input type="radio" name="announcement_color" value="<?php echo esc_attr( $c ); ?>" <?php checked( $color, $c ); ?> />
@@ -248,7 +255,15 @@ function easy_announcements_render_meta_box( $post ) {
 		// Color pickers initialised globally by easy-announcements-admin.js
 	})(jQuery);
 	</script>
-	<?php
+		<?php
+	}
+}
+
+/**
+ * Backward Compatibility Wrappers
+ */
+function easy_announcements_add_meta_box() {
+	// Handled by Easy_Announcements_Meta_Box class
 }
 
 add_action( 'save_post_announcement', 'easy_announcements_save_meta_box', 10, 2 );

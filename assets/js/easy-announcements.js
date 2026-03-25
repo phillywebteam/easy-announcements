@@ -147,20 +147,50 @@ function renderAnnouncementSection(placement, attachment, announcements) {
 	// If section is empty, don't insert it
 	if (section.children.length === 0) return;
 
-	// Determine insertion point
-	let target = document.querySelector('body');
+	// Determine insertion point based on placement
+	let target = null;
 	let method = 'append';
 
-	const placementSettings = {
-		'header': { selector: null, method: 'prepend' },
-		'footer': { selector: null, method: 'append' },
-		'content': { selector: null, method: 'append' },
-		'popup': { selector: 'body', method: 'append' }
-	};
-
-	// For banners, try to find custom selector from settings
-	// For now, using body as fallback
 	if (placement === 'popup') {
+		// Popups go in the body
+		target = document.body;
+		method = 'append';
+	} else if (placement === 'header') {
+		// Try user-defined selector first, then common fallbacks
+		const userSelector = window.easyAnnouncementsSettings?.headerSelector;
+		target = (userSelector && document.querySelector(userSelector)) ||
+			document.querySelector('header') ||
+			document.querySelector('.site-header') ||
+			document.querySelector('.navbar') ||
+			document.querySelector('[role="banner"]') ||
+			document.body;
+		method = 'append';
+	} else if (placement === 'footer') {
+		// Try user-defined selector first, then common fallbacks
+		const userSelector = window.easyAnnouncementsSettings?.footerSelector;
+		target = (userSelector && document.querySelector(userSelector)) ||
+			document.querySelector('footer') ||
+			document.querySelector('.site-footer') ||
+			document.querySelector('[role="contentinfo"]') ||
+			document.body;
+		method = 'prepend';
+	} else if (placement === 'content') {
+		// Try user-defined selector first, then common fallbacks
+		const userSelector = window.easyAnnouncementsSettings?.contentSelector;
+		target = (userSelector && document.querySelector(userSelector)) ||
+			document.querySelector('main') ||
+			document.querySelector('[role="main"]') ||
+			document.querySelector('.main-content') ||
+			document.querySelector('.content') ||
+			document.querySelector('article') ||
+			document.body;
+		if (attachment === 'before') {
+			method = 'prepend';
+		} else {
+			method = 'append';
+		}
+	} else {
+		// Default fallback
 		target = document.body;
 		method = 'append';
 	}
