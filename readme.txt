@@ -1,9 +1,9 @@
 === Easy Announcements ===
 Tags: announcements, popups, banner, heading, announce, advertisement, advertise, briefing, broadcast, disclosure, message, news, notice, statement, easy, philly web team
 Requires at least: 4.7
-Tested up to: 6.6.1
+Tested up to: 6.9.4
 Requires PHP: 7.4
-Stable tag: 0.2.2
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,13 @@ Once you install and active please be sure to visit the settings page to configu
 * [Github](https://github.com/phillywebteam/easy-announcements)
 
 == Changelog ==
+
+= 1.0.1 =
+* Removed dependency on ACF and added custom meta box.
+* Minor bug fixes and optimizations.
+
+= 0.2.2 =
+* Fixed array offset PHP error
 
 = 0.2.2 =
 * Optimized storing and loading of announcements on frontend

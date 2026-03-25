@@ -1,12 +1,6 @@
 jQuery(function ($) {
 	$('html').addClass('live-select');
 	$('body').append('<div class="easy-announcements-live-selector"></div>');
-	$(window).on('resize load', function () {
-		var bWidth = $('body').outerWidth();
-		$('body *:not(.easy-announcements-live-selector):not(.easy-announcements-live-selector *)').css('pointer-events', function () {
-			if ($(this).outerWidth() < bWidth * 0.95) return 'none';
-		});
-	});
 	function getUrlVars() {
 		var vars = [], hash;
 		var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
@@ -87,12 +81,12 @@ jQuery(function ($) {
 					break;
 			}
 
-			$('.easy-announcements-live-selector').html('<div class="card selector shadow-lg"><div class="card-body"><p class="mb-0">Detected Theme:</p><h6 class="mt-0 mb-2">' + theme_info['name'] + '</h6><p class="mt-0 mb-0 text-capitalize">' + select_type + ' Selector:</p><p class="mb-3"><code class="fs-5">' + el_selector + '</code></p><a href="#" class="btn btn-primary confirm-live-select-found">Use Selector</a><a href="#" class="btn btn-secondary cancel-live-select-found">Try Again</a></div></div>');
+			$('.easy-announcements-live-selector').html('<div class="ea-card selector ea-shadow-lg"><div class="ea-card-body"><p class="ea-mb-0">Detected Theme:</p><h6 class="ea-mt-0 ea-mb-2">' + theme_info['name'] + '</h6><p class="ea-mt-0 ea-mb-0 ea-text-capitalize">' + select_type + ' Selector:</p><p class="ea-mb-3"><code class="ea-fs-5">' + el_selector + '</code></p><a href="#" class="ea-btn ea-btn-primary confirm-live-select-found">Use Selector</a><a href="#" class="ea-btn ea-btn-secondary cancel-live-select-found">Try Again</a></div></div>');
 		} else if (
 			known_selector != false &&
 			known_selector != ''
 		) {
-			$('.easy-announcements-live-selector').html('<div class="card selector shadow-lg"><div class="card-body"><p class="mt-0 mb-0 text-capitalize">Auto Detected Selector:</p><p class="mb-3"><code class="fs-5">' + el_selector + '</code></p><a href="#" class="btn btn-primary confirm-live-select-found">Use Selector</a><a href="#" class="btn btn-secondary cancel-live-select-found">Try Again</a></div></div>');
+			$('.easy-announcements-live-selector').html('<div class="ea-card selector ea-shadow-lg"><div class="ea-card-body"><p class="ea-mt-0 ea-mb-0 ea-text-capitalize">Auto Detected Selector:</p><p class="ea-mb-3"><code class="ea-fs-5">' + el_selector + '</code></p><a href="#" class="ea-btn ea-btn-primary confirm-live-select-found">Use Selector</a><a href="#" class="ea-btn ea-btn-secondary cancel-live-select-found">Try Again</a></div></div>');
 		} else {
 			manual_selector = true;
 		}
@@ -208,7 +202,7 @@ jQuery(function ($) {
 
 					el_selector = (el_array.length > 0) ? el_array.join(' ') : 'No Working Selectors';
 
-					$('.easy-announcements-live-selector').html('<div class="card selector shadow-lg"><div class="card-body"><h6 class="mt-0 mb-2">Selector:</h6><p class="mb-3"><code>' + el_selector + '</code></p><a href="#" class="btn btn-primary confirm-live-select-found">Use Selector</a><a href="#" class="btn btn-secondary cancel-live-select-found">Try Again</a></div></div>');
+					$('.easy-announcements-live-selector').html('<div class="ea-card selector ea-shadow-lg"><div class="ea-card-body"><h6 class="ea-mt-0 ea-mb-2">Selector:</h6><p class="ea-mb-3"><code>' + el_selector + '</code></p><a href="#" class="ea-btn ea-btn-primary confirm-live-select-found">Use Selector</a><a href="#" class="ea-btn ea-btn-secondary cancel-live-select-found">Try Again</a></div></div>');
 
 					$('body').addClass('live-select-found');
 

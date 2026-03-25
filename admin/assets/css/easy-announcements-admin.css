@@ -1,1 +1,171 @@
-.form-table .selectors-input input[type=text]{border-top-right-radius:0;border-bottom-right-radius:0;border-right:none;margin-right:0}.form-table .selectors-input .live-select-toggle{border-top-left-radius:0;border-bottom-left-radius:0;font-size:11px;padding:0 10px}.form-table .selectors-input .live-select-frame{background:#fff;border:1px solid #dcdcde;border-top:none;border-radius:0 0 6px 6px;display:block;height:800px;width:calc(100% - 2px)}.form-table .selectors-input .live-select-toolbar{background:#dcdcde;border-radius:6px 6px 0 0;align-items:center;display:flex;margin-top:10px;padding:5px}.form-table .selectors-input .live-select-toolbar button:disabled{border-color:#8c8f94!important;border-bottom-right-radius:0;border-right:none;border-top-right-radius:0;margin-right:0}.form-table .selectors-input .live-select-toolbar button.live-select-go{border-top-left-radius:0;border-bottom-left-radius:0}.form-table .selectors-input .live-select-toolbar button.live-select-go .dashicons{font-size:16px}.form-table .selectors-input .live-select-toolbar button .dashicons{display:block;height:100%}.form-table .selectors-input .live-select-toolbar button .dashicons.dashicons-admin-site{transform:translate(1px,1px)}.form-table .selectors-input .live-select-toolbar input[type=url]{border-right:none;border-radius:0;margin:0;flex-grow:1}.form-table .selectors-input .live-select-toolbar input[type=url]:not(:focus){color:#777}.form-table .sub-fields{display:flex;flex-wrap:wrap;gap:20px}.form-table .sub-fields .sub-field{padding:0;position:relative}.form-table .sub-fields .sub-field>label{display:block;padding:0 0 5px}.form-table .sub-fields .sub-field .wp-picker-container .wp-color-result:not(:focus){border-color:#8c8f94}.form-table .sub-fields .sub-field .wp-picker-container .wp-picker-holder{left:0;position:absolute;top:100%;z-index:1}
+.form-table .selectors-input input[type=text] {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-right: none;
+	margin-right: 0;
+}
+
+.form-table .selectors-input .live-select-toggle {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	font-size: 11px;
+	padding: 0 10px;
+}
+
+.form-table .selectors-input .live-select-frame {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-top: none;
+	border-radius: 0 0 6px 6px;
+	display: block;
+	height: 800px;
+	width: calc(100% - 2px);
+}
+
+.form-table .selectors-input .live-select-toolbar {
+	background: #dcdcde;
+	border-radius: 6px 6px 0 0;
+	align-items: center;
+	display: flex;
+	margin-top: 10px;
+	padding: 5px;
+}
+
+.form-table .selectors-input .live-select-toolbar button:disabled {
+	border-color: #8c8f94 !important;
+	border-bottom-right-radius: 0;
+	border-right: none;
+	border-top-right-radius: 0;
+	margin-right: 0;
+}
+
+.form-table .selectors-input .live-select-toolbar button.live-select-go {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.form-table .selectors-input .live-select-toolbar button.live-select-go .dashicons {
+	font-size: 16px;
+}
+
+.form-table .selectors-input .live-select-toolbar button .dashicons {
+	display: block;
+	height: 100%;
+}
+
+.form-table .selectors-input .live-select-toolbar button .dashicons.dashicons-admin-site {
+	transform: translate(1px, 1px);
+}
+
+.form-table .selectors-input .live-select-toolbar input[type=url] {
+	border-right: none;
+	border-radius: 0;
+	margin: 0;
+	flex-grow: 1;
+}
+
+.form-table .selectors-input .live-select-toolbar input[type=url]:not(:focus) {
+	color: #777;
+}
+
+.form-table .sub-fields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+.form-table .sub-fields .sub-field {
+	padding: 0;
+	position: relative;
+}
+
+.form-table .sub-fields .sub-field > label {
+	display: block;
+	padding: 0 0 5px;
+}
+
+.form-table .sub-fields .sub-field .wp-picker-container .wp-color-result:not(:focus) {
+	border-color: #8c8f94;
+}
+
+.form-table .sub-fields .sub-field .wp-picker-container .wp-picker-holder {
+	left: 0;
+	position: absolute;
+	top: 100%;
+	z-index: 1;
+}
+
+/* =============================================================================
+   Meta Box — Announcement Settings
+   ============================================================================= */
+.ea-meta-wrap {
+    padding: 20px 0 0;
+}
+.ea-meta-wrap .ea-row {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 14px;
+	align-items: flex-start;
+	border-top: 1px solid #f0f0f0;
+	padding-top: 14px;
+}
+.ea-meta-wrap .ea-row:first-child {
+	border-top: none;
+	padding-top: 0;
+}
+.ea-meta-wrap .ea-row > label.ea-label {
+	width: 160px;
+	font-weight: 600;
+	padding-top: 4px;
+	flex-shrink: 0;
+}
+.ea-meta-wrap .ea-field {
+	flex: 1;
+}
+.ea-meta-wrap .description {
+	margin-top: 4px;
+}
+.ea-meta-wrap select[multiple] {
+	min-height: 110px;
+	width: 100%;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+/* Color preset radio buttons */
+.ea-color-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+.ea-color-buttons label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border: 2px solid #ddd;
+	border-radius: 4px;
+	cursor: pointer;
+}
+.ea-color-buttons input[type="radio"] {
+	display: none;
+}
+.ea-color-buttons label:has(input:checked) {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+/* Color swatch square */
+.ea-swatch {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border-radius: 3px;
+	border: 1px solid rgba(0, 0, 0, .2);
+	flex-shrink: 0;
+}
+
+/* General hide utility */
+.ea-hidden {
+	display: none !important;
+}

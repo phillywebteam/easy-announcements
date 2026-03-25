@@ -194,7 +194,7 @@ class easy_announcements_settings {
 
 	public function background_color_callback() {
 		?>
-		<div class="sub-fields horizontal">
+		<div class="sub-fields">
 			<div class="sub-field">
 				<label for="background_color_primary"><strong><?php _e( 'Primary', 'easy-announcements' ); ?></strong></label>
 				<?php printf(
@@ -249,7 +249,7 @@ class easy_announcements_settings {
 
 	public function content_color_callback() {
 		?>
-		<div class="sub-fields horizontal">
+		<div class="sub-fields">
 			<div class="sub-field">
 				<label for="content_color_primary"><strong><?php _e( 'Primary', 'easy-announcements' ); ?></strong></label>
 				<?php printf(

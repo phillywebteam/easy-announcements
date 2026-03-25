@@ -1,52 +1,97 @@
+/* ----- Cookie helpers ----- */
+
 function get_easy_announcements_cookie(cookie) {
-	if (typeof Cookies.get('easy_announcements') == 'undefined') {
+	if (typeof Cookies.get('easy_announcements') === 'undefined') {
 		set_easy_announcements_cookie();
 	}
-	var visitor_cookie = Cookies.get('easy_announcements'); // get the cookie
-	visitor_cookie = atob(visitor_cookie); // decrypt it
-	visitor_cookie = JSON.parse(visitor_cookie); // convert to array
-	return (typeof visitor_cookie[cookie] != 'undefined') ? visitor_cookie[cookie] : ''; // return either the specific cookie value or return blank
+	var raw = Cookies.get('easy_announcements');
+	var jar = JSON.parse(atob(raw));
+	return (typeof jar[cookie] !== 'undefined') ? jar[cookie] : '';
 }
 
 function check_easy_announcements_cookie(cookie) {
-	return (
-		typeof get_easy_announcements_cookie(cookie) != 'undefined' // does it exist?
-		&& get_easy_announcements_cookie(cookie) != '' // is it blank?
-		&& get_easy_announcements_cookie(cookie) != 'false' // is it blank?
-	) ? true : false;
+	var val = get_easy_announcements_cookie(cookie);
+	return (val !== '' && val !== 'false');
 }
 
 function set_easy_announcements_cookie(callback) {
-	var visitor_cookie = {};
-	jQuery.each(announcement_ids, function (index, value) {
-		visitor_cookie['dismiss-' + value] = 'false';
+	var jar = {};
+	jQuery.each(announcement_ids, function(i, id) {
+		jar['dismiss-' + id] = 'false';
 	});
-	visitor_cookie = JSON.stringify(visitor_cookie); // turn into string
-	visitor_cookie = btoa(visitor_cookie); // encrypt it
-	Cookies.set('easy_announcements', visitor_cookie, { expires: 7 });
-	if (typeof callback === 'function') setTimeout(callback(), 100);
+	Cookies.set('easy_announcements', btoa(JSON.stringify(jar)), { expires: 7 });
+	if (typeof callback === 'function') setTimeout(callback, 100);
 }
 
 function update_easy_announcements_cookie(cookie, value, callback) {
-	if (typeof Cookies.get('easy_announcements') == 'undefined') {
+	if (typeof Cookies.get('easy_announcements') === 'undefined') {
 		set_easy_announcements_cookie();
 	}
-	var visitor_cookie = Cookies.get('easy_announcements'); // get the cookie
-	visitor_cookie = atob(visitor_cookie); // decrypt it
-	visitor_cookie = JSON.parse(visitor_cookie); // convert to array
-	visitor_cookie[cookie] = value; // update the value in the array
-	visitor_cookie = JSON.stringify(visitor_cookie); // turn back into string
-	visitor_cookie = btoa(visitor_cookie); // encrypt it
-	Cookies.set('easy_announcements', visitor_cookie, { expires: 7 }); // set the cookie
-	if (typeof callback === 'function') setTimeout(callback(), 100);
+	var raw = Cookies.get('easy_announcements');
+	var jar = JSON.parse(atob(raw));
+	jar[cookie] = value;
+	Cookies.set('easy_announcements', btoa(JSON.stringify(jar)), { expires: 7 });
+	if (typeof callback === 'function') setTimeout(callback, 100);
 }
 
-jQuery(function ($) {
-	$(document).on('click', '.site-announcements .announcement .dismiss', function (event) {
+/* ----- Modal helpers ----- */
+
+var eaBackdrop = null;
+
+function eaShowModal(modal_id) {
+	var $modal = jQuery('#' + modal_id);
+	if (!$modal.length) return;
+
+	if (!eaBackdrop) {
+		eaBackdrop = jQuery('<div class="ea-modal-backdrop show" aria-hidden="true"></div>').appendTo('body');
+	}
+
+	$modal.addClass('show').removeAttr('aria-hidden').attr('aria-modal', 'true');
+	jQuery('body').addClass('ea-modal-open');
+	$modal.trigger('focus');
+}
+
+function eaDismissModal($modal) {
+	$modal.removeClass('show').removeAttr('aria-modal').attr('aria-hidden', 'true');
+
+	if (jQuery('.ea-modal.show').length === 0 && eaBackdrop) {
+		eaBackdrop.remove();
+		eaBackdrop = null;
+		jQuery('body').removeClass('ea-modal-open');
+	}
+
+	$modal.trigger('ea.modal.dismiss');
+}
+
+/* ----- Event bindings ----- */
+
+jQuery(function($) {
+
+	// Banner: dismiss
+	$(document).on('click', '.site-announcements .announcement .dismiss', function(event) {
 		event.preventDefault();
-		var announcement_id = $(this).attr('href').replace('#dismiss-', '');
-		update_easy_announcements_cookie('dismiss-' + announcement_id, 'true', function () {
-			$('.announcement-' + announcement_id).slideUp();
+		var id = $(this).attr('href').replace('#dismiss-', '');
+		update_easy_announcements_cookie('dismiss-' + id, 'true', function() {
+			$('.announcement-' + id).slideUp();
 		});
 	});
+
+	// Modal: close button
+	$(document).on('click', '[data-ea-dismiss="modal"]', function() {
+		eaDismissModal($(this).closest('.ea-modal'));
+	});
+
+	// Modal: backdrop click
+	$(document).on('click', '.ea-modal-backdrop', function() {
+		eaDismissModal($('.ea-modal.show').first());
+	});
+
+	// Modal: ESC key
+	$(document).on('keydown', function(e) {
+		if (e.key === 'Escape') {
+			var $open = $('.ea-modal.show').first();
+			if ($open.length) eaDismissModal($open);
+		}
+	});
+
 });
